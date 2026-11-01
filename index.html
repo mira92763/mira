@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10111a">
-<title>MIRA 0.3 — Новое время, большие амбиции</title>
+<title>MIRA 0.4 — Новое время, большие амбиции</title>
 <style>
 :root{--bg:#10111a;--panel:#191b29;--panel2:#222538;--line:#30344a;--text:#f4f3ff;--muted:#999db4;--accent:#8c7cf6;--accent2:#6557cf}
 *{box-sizing:border-box}
@@ -53,24 +53,26 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 .content{min-height:650px;padding:24px}
 .view{display:none}
 .view.active{display:block}
-.heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px}
 .heading h1{font-size:24px;margin:0}
 .chat-layout{display:grid;grid-template-columns:minmax(190px,.8fr) 1.4fr;gap:14px}
-.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;min-width:0}
 .chat-list{display:flex;flex-direction:column;gap:5px}
-.chat-item{background:transparent;text-align:left;padding:12px;border-radius:12px;display:flex;align-items:center;gap:10px}
-.chat-item.active,.chat-item:hover{background:var(--panel2)}
+.chat-item{background:transparent;text-align:left;padding:12px;border-radius:12px;display:flex;align-items:center;gap:10px;width:100%;min-width:0}
+.chat-item.active,.chat-item:hover,.search-result:hover{background:var(--panel2)}
 .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#a98cf5,#4d9fba);font-weight:800;flex:none}
 .chat-main{display:flex;flex-direction:column;min-height:440px}
-.chat-top{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:4px 4px 13px}
-.messages{padding:16px 2px;display:flex;flex-direction:column;gap:10px;flex:1;overflow:auto;max-height:350px}
-.bubble{max-width:80%;background:var(--panel2);padding:10px 13px;border-radius:14px 14px 14px 4px;line-height:1.45;overflow-wrap:anywhere}
+.chat-top{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:4px 4px 13px;min-width:0}
+.chat-top>div:last-child{min-width:0;overflow-wrap:anywhere}
+.messages{padding:16px 2px;display:flex;flex-direction:column;gap:10px;flex:1;overflow:auto;max-height:420px;min-height:250px}
+.bubble{max-width:80%;background:var(--panel2);padding:10px 13px;border-radius:14px 14px 14px 4px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-wrap}
 .bubble.mine{align-self:flex-end;background:var(--accent2);border-radius:14px 14px 4px 14px}
 .send{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.send .field{flex:1}
 .profile-card{text-align:center;max-width:480px;margin:auto;padding:28px}
 .profile-avatar{width:86px;height:86px;margin:0 auto 12px;font-size:30px}
 .notice{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;line-height:1.5;margin-top:18px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent);padding:12px 18px;border-radius:12px;display:none;z-index:5}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent);padding:12px 18px;border-radius:12px;display:none;z-index:5;max-width:90%;text-align:center}
 .toast.show{display:block}
 .theme-picker{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;touch-action:pan-y;user-select:none}
 .theme-choice{flex:1;text-align:center;min-width:0;padding:5px}
@@ -82,17 +84,24 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 .theme-dots{display:flex;justify-content:center;gap:7px;margin:12px}
 .theme-dots span{width:7px;height:7px;border-radius:50%;background:#555}
 .theme-dots span.selected{background:var(--accent);width:19px;border-radius:8px}
+.search-result{display:flex;align-items:center;gap:10px;padding:10px;width:100%;border-radius:12px;background:transparent;text-align:left;min-width:0}
+.search-result .avatar{width:36px;height:36px}
+.search-result>div:last-child,.chat-item>div:last-child{min-width:0;overflow-wrap:anywhere}
+.empty-state{color:var(--muted);font-size:12px;text-align:center;padding:18px 8px;line-height:1.5}
+#userSearch{margin-bottom:5px}
 @media(max-width:760px){
-.app{padding:0 10px}header{height:68px}
+.app{padding:0 10px}
+header{height:68px}
 .layout{grid-template-columns:1fr;gap:12px;padding:12px 0}
 .sidebar{position:static;display:flex;overflow:auto;padding:7px;gap:5px}
 .nav{white-space:nowrap;width:auto;margin:0;padding:10px}
 .nav span{width:auto;margin-right:5px}
-.side-note{display:none}.content{padding:15px;min-height:620px}
+.side-note{display:none}
+.content{padding:15px;min-height:620px}
 .chat-layout{grid-template-columns:1fr}
-.chat-list{display:grid;grid-template-columns:repeat(3,1fr)}
-.chat-item{padding:8px;flex-direction:column;text-align:center;font-size:12px}
-.chat-item .preview{display:none}
+.chat-list{display:flex}
+.chat-item{padding:8px;flex-direction:row;text-align:left;font-size:13px}
+.chat-item .preview{display:block}
 .chat-main{min-height:390px}
 .heading h1{font-size:21px}
 .header-user .muted{display:none}
@@ -102,7 +111,6 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 </head>
 <body>
 
-<!-- ЭКРАН АВТОРИЗАЦИИ -->
 <section class="auth-screen" id="authScreen">
 <div class="auth-card">
 <div class="auth-brand">
@@ -160,7 +168,6 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 </div>
 </section>
 
-<!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
 <div class="app hidden" id="app">
 <header>
 <div class="brand">
@@ -189,26 +196,37 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 <section class="view active" id="chats">
 <div class="heading">
 <div><h1>Сообщения</h1><div class="muted small">Твои диалоги в одном месте</div></div>
-<button class="btn secondary" id="newChat">＋ Новый чат</button>
+<button class="btn secondary" id="newChat" type="button">＋ Новый чат</button>
 </div>
+
 <div class="chat-layout">
 <div class="box">
-<div class="muted small" style="padding:7px 8px 10px">ДИАЛОГИ</div>
+<div class="muted small" style="padding:7px 8px 10px">ПОИСК ПОЛЬЗОВАТЕЛЕЙ</div>
+<input class="field" id="userSearch" placeholder="Введи @никнейм..." autocomplete="off">
+<div id="searchResults" class="chat-list" style="margin-top:10px"></div>
+<div class="muted small" style="padding:16px 8px 10px">МОИ ДИАЛОГИ</div>
 <div class="chat-list" id="chatList"></div>
 </div>
+
 <div class="box chat-main">
 <div class="chat-top">
-<div class="avatar" id="activeAvatar">А</div>
-<div><b id="activeName">Алекс</b><div class="muted small">Демо-переписка</div></div>
+<div class="avatar" id="activeAvatar">M</div>
+<div>
+<b id="activeName">Выбери диалог</b>
+<div class="muted small" id="activeUsername">Личные сообщения MIRA</div>
 </div>
-<div class="messages" id="messages"></div>
+</div>
+<div class="messages" id="messages">
+<div class="empty-state">Найди пользователя и начни общение.</div>
+</div>
 <form class="send" id="sendForm">
-<input class="field" id="messageInput" placeholder="Написать сообщение…" autocomplete="off">
-<button class="btn">➤</button>
+<input class="field" id="messageInput" maxlength="4000" placeholder="Написать сообщение…" autocomplete="off" disabled>
+<button class="btn" id="sendButton" disabled>➤</button>
 </form>
 </div>
 </div>
-<div class="notice">Пока здесь демонстрационные диалоги, сохранённые только на этом устройстве. Настоящие переписки подключим следующим этапом.</div>
+
+<div class="notice">MIRA 0.4 · Личные переписки сохраняются в Supabase и доступны с разных устройств.</div>
 </section>
 
 <section class="view" id="profile">
@@ -238,7 +256,7 @@ header{height:76px;display:flex;align-items:center;justify-content:space-between
 <div class="theme-dots" id="themeDots"></div>
 <p class="muted small" style="text-align:center">Можно также нажимать на стрелки.</p>
 </div>
-<div class="notice">Версия 0.3 · Регистрация и профили подключены через Supabase. Чаты пока демонстрационные.</div>
+<div class="notice">Версия 0.4 · Регистрация, профили и личные сообщения через Supabase.</div>
 </section>
 </main>
 </div>
@@ -263,59 +281,8 @@ function toast(m){
  e.textContent=m;
  e.classList.add("show");
  clearTimeout(toast.timer);
- toast.timer=setTimeout(()=>e.classList.remove("show"),2300);
+ toast.timer=setTimeout(()=>e.classList.remove("show"),2600);
 }
-function esc(v){
- return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-
-/* ДЕМО-ЧАТЫ */
-const defaultChats=[
- {name:"Алекс",avatar:"А",messages:[["Привет! Как дела?",0],["Всё отлично! А у тебя?",1],["Тоже всё хорошо 😎",0]]},
- {name:"Маша",avatar:"М",messages:[["Привет! Смотри, что нашла ✨",0],["Вау, красиво!",1]]},
- {name:"Даня",avatar:"Д",messages:[["Залетаешь вечером?",0]]}
-];
-let chats=readStore("mira_chats_v1",defaultChats);
-if(!Array.isArray(chats)||!chats.length)chats=defaultChats;
-chats=chats.map(c=>({
- name:String(c.name||"Пользователь").slice(0,40),
- avatar:String(c.avatar||"М").slice(0,2),
- messages:Array.isArray(c.messages)?c.messages.map(m=>[String(m[0]||""),m[1]?1:0]):[]
-}));
-let current=0;
-
-function renderList(){
- $("#chatList").innerHTML=chats.map((c,i)=>`
- <button class="chat-item ${i===current?"active":""}" data-chat="${i}" type="button">
- <div class="avatar">${esc(c.avatar)}</div>
- <div><b>${esc(c.name)}</b><div class="muted small preview">${esc(c.messages.at(-1)?.[0]||"Нет сообщений")}</div></div>
- </button>`).join("");
- document.querySelectorAll("[data-chat]").forEach(b=>b.addEventListener("click",()=>{
-  current=Number(b.dataset.chat);renderChat();
- }));
-}
-function renderChat(){
- const c=chats[current];if(!c)return;
- $("#activeName").textContent=c.name;
- $("#activeAvatar").textContent=c.avatar;
- $("#messages").innerHTML=c.messages.map(m=>`<div class="bubble ${m[1]?"mine":""}">${esc(m[0])}</div>`).join("");
- $("#messages").scrollTop=$("#messages").scrollHeight;
- renderList();saveStore("mira_chats_v1",chats);
-}
-$("#sendForm").addEventListener("submit",e=>{
- e.preventDefault();
- const i=$("#messageInput"),v=i.value.trim();
- if(!v)return;
- chats[current].messages.push([v.slice(0,2000),1]);
- i.value="";renderChat();
-});
-$("#newChat").addEventListener("click",()=>{
- const n=prompt("Имя собеседника для демо-чата:");
- if(!n||!n.trim())return;
- const s=n.trim().slice(0,40);
- chats.push({name:s,avatar:s[0].toUpperCase(),messages:[["Новый диалог создан.",0]]});
- current=chats.length-1;renderChat();
-});
 
 /* ПЕРЕКЛЮЧЕНИЕ РАЗДЕЛОВ */
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{
@@ -364,10 +331,8 @@ picker.addEventListener("keydown",e=>{
  if(e.key==="ArrowLeft"){e.preventDefault();setTheme(themeIndex-1)}
 });
 setTheme(themeIndex);
-renderChat();
 </script>
 
-<!-- SUPABASE AUTH -->
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -380,7 +345,14 @@ const app=$("#app");
 const authMessage=$("#authMessage");
 const registerPanel=$("#registerPanel");
 const loginPanel=$("#loginPanel");
+
 let busy=false;
+let currentUser=null;
+let activeConversationId=null;
+let messageChannel=null;
+let conversationChannel=null;
+let searchTimer=null;
+let openingConversation=false;
 
 function showMessage(text,type="success"){
  authMessage.textContent=text;
@@ -412,6 +384,7 @@ async function loadProfile(user){
   .select("id,username,display_name")
   .eq("id",user.id)
   .maybeSingle();
+
  if(error)console.error("Ошибка загрузки профиля:",error);
  return data;
 }
@@ -419,23 +392,29 @@ async function loadProfile(user){
 function showApp(user,profile){
  const name=profile?.display_name||user.user_metadata?.display_name||"Пользователь";
  const username=profile?.username||user.user_metadata?.username||"user";
+
  authScreen.classList.add("hidden");
  app.classList.remove("hidden");
+
  $("#headerUsername").textContent="@"+username;
  $("#profileName").textContent=name;
  $("#profileNick").textContent="@"+username;
  $("#profileAvatar").textContent=(name.trim()[0]||"M").toUpperCase();
  $("#profileEmail").textContent=user.email||"";
+
+ startChats(user);
 }
 
 async function refreshSession(){
  const {data,error}=await supabase.auth.getSession();
  if(error)console.error(error);
+
  if(!data.session){
   app.classList.add("hidden");
   authScreen.classList.remove("hidden");
   return;
  }
+
  const profile=await loadProfile(data.session.user);
  showApp(data.session.user,profile);
 }
@@ -464,6 +443,7 @@ $("#registerForm").addEventListener("submit",async e=>{
  }
 
  setBusy("registerSubmit",true,"Создать аккаунт");
+
  try{
   const {data,error}=await supabase.auth.signUp({
    email,
@@ -473,6 +453,7 @@ $("#registerForm").addEventListener("submit",async e=>{
     data:{username,display_name:displayName}
    }
   });
+
   if(error)throw error;
 
   if(data.session){
@@ -499,12 +480,16 @@ $("#registerForm").addEventListener("submit",async e=>{
 $("#loginForm").addEventListener("submit",async e=>{
  e.preventDefault();
  if(busy)return;
+
  setBusy("loginSubmit",true,"Войти");
+
  try{
   const email=$("#loginEmail").value.trim();
   const password=$("#loginPassword").value;
   const {data,error}=await supabase.auth.signInWithPassword({email,password});
+
   if(error)throw error;
+
   const profile=await loadProfile(data.user);
   showApp(data.user,profile);
  }catch(error){
@@ -517,22 +502,401 @@ $("#loginForm").addEventListener("submit",async e=>{
 
 /* ВЫХОД */
 $("#logoutBtn").addEventListener("click",async()=>{
+ stopChatChannels();
+ currentUser=null;
+
  const {error}=await supabase.auth.signOut();
+
  if(error){
   toast("Ошибка выхода: "+error.message);
   return;
  }
+
  app.classList.add("hidden");
  authScreen.classList.remove("hidden");
  switchToLogin();
 });
 
-/* СЛЕДИМ ЗА СОСТОЯНИЕМ СЕССИИ */
+/* АВТОРИЗАЦИЯ */
 supabase.auth.onAuthStateChange((event,session)=>{
  if(event==="SIGNED_OUT"||!session){
+  stopChatChannels();
+  currentUser=null;
   app.classList.add("hidden");
   authScreen.classList.remove("hidden");
  }
+});
+
+/* MIRA 0.4 — ЛИЧНЫЕ ЧАТЫ */
+
+function stopChatChannels(){
+ if(messageChannel){
+  supabase.removeChannel(messageChannel);
+  messageChannel=null;
+ }
+ if(conversationChannel){
+  supabase.removeChannel(conversationChannel);
+  conversationChannel=null;
+ }
+ activeConversationId=null;
+}
+
+async function startChats(user){
+ stopChatChannels();
+ currentUser=user;
+
+ $("#chatList").innerHTML='<div class="empty-state">Загружаем диалоги...</div>';
+ $("#searchResults").innerHTML="";
+ $("#messages").innerHTML='<div class="empty-state">Найди пользователя и начни общение.</div>';
+ $("#activeName").textContent="Выбери диалог";
+ $("#activeUsername").textContent="Личные сообщения MIRA";
+ $("#activeAvatar").textContent="M";
+ $("#messageInput").disabled=true;
+ $("#sendButton").disabled=true;
+
+ await loadConversations();
+
+ conversationChannel=supabase
+  .channel("mira-conversations-"+user.id)
+  .on("postgres_changes",{
+   event:"*",
+   schema:"public",
+   table:"conversations"
+  },()=>loadConversations())
+  .subscribe();
+}
+
+async function loadConversations(){
+ if(!currentUser)return;
+
+ const {data,error}=await supabase
+  .from("conversations")
+  .select("id,user_one,user_two,created_at")
+  .or(`user_one.eq.${currentUser.id},user_two.eq.${currentUser.id}`)
+  .order("created_at",{ascending:false});
+
+ if(error){
+  console.error(error);
+  $("#chatList").innerHTML='<div class="empty-state">Не удалось загрузить диалоги.</div>';
+  return;
+ }
+
+ const conversations=[];
+
+ for(const conversation of data||[]){
+  const otherId=conversation.user_one===currentUser.id
+   ?conversation.user_two
+   :conversation.user_one;
+
+  const {data:profile,error:profileError}=await supabase
+   .from("profiles")
+   .select("id,username,display_name")
+   .eq("id",otherId)
+   .maybeSingle();
+
+  if(profileError)console.error(profileError);
+
+  conversations.push({
+   id:conversation.id,
+   userId:otherId,
+   username:profile?.username||"user",
+   name:profile?.display_name||"Пользователь"
+  });
+ }
+
+ const list=$("#chatList");
+ list.innerHTML="";
+
+ if(!conversations.length){
+  list.innerHTML='<div class="empty-state">Пока нет диалогов. Найди пользователя выше!</div>';
+  return;
+ }
+
+ for(const chat of conversations){
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="chat-item";
+  button.dataset.conversation=chat.id;
+
+  const avatar=document.createElement("div");
+  avatar.className="avatar";
+  avatar.textContent=(chat.name[0]||"M").toUpperCase();
+
+  const info=document.createElement("div");
+  const name=document.createElement("b");
+  name.textContent=chat.name;
+
+  const nick=document.createElement("div");
+  nick.className="muted small preview";
+  nick.textContent="@"+chat.username;
+
+  info.append(name,nick);
+  button.append(avatar,info);
+  button.addEventListener("click",()=>openConversation(chat));
+  list.append(button);
+ }
+
+ if(activeConversationId){
+  document.querySelectorAll("[data-conversation]").forEach(button=>{
+   button.classList.toggle("active",button.dataset.conversation===activeConversationId);
+  });
+ }
+}
+
+/* ОТКРЫТИЕ ДИАЛОГА */
+async function openConversation(chat){
+ if(!chat||!currentUser||openingConversation)return;
+
+ openingConversation=true;
+
+ try{
+  if(messageChannel){
+   await supabase.removeChannel(messageChannel);
+   messageChannel=null;
+  }
+
+  activeConversationId=chat.id;
+
+  $("#activeName").textContent=chat.name;
+  $("#activeUsername").textContent="@"+chat.username;
+  $("#activeAvatar").textContent=(chat.name[0]||"M").toUpperCase();
+  $("#messageInput").disabled=false;
+  $("#sendButton").disabled=false;
+
+  document.querySelectorAll("[data-conversation]").forEach(button=>{
+   button.classList.toggle("active",button.dataset.conversation===chat.id);
+  });
+
+  await loadMessages(chat.id);
+
+  if(activeConversationId!==chat.id)return;
+
+  messageChannel=supabase
+   .channel("mira-messages-"+chat.id+"-"+currentUser.id)
+   .on("postgres_changes",{
+    event:"INSERT",
+    schema:"public",
+    table:"messages",
+    filter:"conversation_id=eq."+chat.id
+   },payload=>{
+    if(activeConversationId===chat.id)addMessageToScreen(payload.new);
+   })
+   .subscribe();
+ }finally{
+  openingConversation=false;
+ }
+}
+
+function addMessageToScreen(message){
+ if(!message||message.conversation_id!==activeConversationId)return;
+
+ const container=$("#messages");
+
+ if(container.querySelector(".empty-state")){
+  container.innerHTML="";
+ }
+
+ if(container.querySelector(`[data-message-id="${message.id}"]`))return;
+
+ const bubble=document.createElement("div");
+ bubble.className="bubble"+(message.sender_id===currentUser.id?" mine":"");
+ bubble.dataset.messageId=message.id;
+ bubble.textContent=message.body;
+
+ container.append(bubble);
+ container.scrollTop=container.scrollHeight;
+}
+
+async function loadMessages(conversationId){
+ $("#messages").innerHTML='<div class="empty-state">Загружаем сообщения...</div>';
+
+ const {data,error}=await supabase
+  .from("messages")
+  .select("id,conversation_id,sender_id,body,created_at")
+  .eq("conversation_id",conversationId)
+  .order("created_at",{ascending:true})
+  .limit(200);
+
+ if(error){
+  console.error(error);
+  $("#messages").innerHTML='<div class="empty-state">Не удалось загрузить сообщения.</div>';
+  return;
+ }
+
+ if(activeConversationId!==conversationId)return;
+
+ $("#messages").innerHTML="";
+
+ if(!data?.length){
+  $("#messages").innerHTML='<div class="empty-state">Это начало вашей переписки. Напиши первое сообщение!</div>';
+  return;
+ }
+
+ data.forEach(addMessageToScreen);
+ $("#messages").scrollTop=$("#messages").scrollHeight;
+}
+
+/* ПОИСК ПОЛЬЗОВАТЕЛЕЙ */
+$("#userSearch").addEventListener("input",()=>{
+ clearTimeout(searchTimer);
+
+ const query=$("#userSearch").value.trim().replace(/^@/,"").toLowerCase();
+
+ if(query.length<2){
+  $("#searchResults").innerHTML="";
+  return;
+ }
+
+ searchTimer=setTimeout(()=>searchUsers(query),350);
+});
+
+async function searchUsers(query){
+ if(!currentUser)return;
+
+ const {data,error}=await supabase
+  .from("profiles")
+  .select("id,username,display_name")
+  .ilike("username",query+"%")
+  .neq("id",currentUser.id)
+  .limit(10);
+
+ if(error){
+  console.error(error);
+  $("#searchResults").innerHTML='<div class="empty-state">Ошибка поиска пользователей.</div>';
+  return;
+ }
+
+ const results=$("#searchResults");
+ results.innerHTML="";
+
+ if(!data?.length){
+  results.innerHTML='<div class="empty-state">Пользователи не найдены.</div>';
+  return;
+ }
+
+ for(const profile of data){
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="search-result";
+
+  const avatar=document.createElement("div");
+  avatar.className="avatar";
+  avatar.textContent=(profile.display_name?.[0]||"M").toUpperCase();
+
+  const info=document.createElement("div");
+  const name=document.createElement("b");
+  name.textContent=profile.display_name||"Пользователь";
+
+  const nick=document.createElement("div");
+  nick.className="muted small";
+  nick.textContent="@"+profile.username;
+
+  info.append(name,nick);
+  button.append(avatar,info);
+  button.addEventListener("click",()=>createConversation(profile));
+  results.append(button);
+ }
+}
+
+/* СОЗДАНИЕ ЛИЧНОГО ДИАЛОГА */
+async function createConversation(profile){
+ if(!currentUser||!profile||profile.id===currentUser.id)return;
+
+ const first=currentUser.id<profile.id?currentUser.id:profile.id;
+ const second=currentUser.id<profile.id?profile.id:currentUser.id;
+
+ let {data:conversation,error}=await supabase
+  .from("conversations")
+  .select("id")
+  .eq("user_one",first)
+  .eq("user_two",second)
+  .maybeSingle();
+
+ if(error){
+  console.error(error);
+  toast("Не удалось проверить диалог.");
+  return;
+ }
+
+ if(!conversation){
+  const result=await supabase
+   .from("conversations")
+   .insert({user_one:first,user_two:second})
+   .select("id")
+   .single();
+
+  conversation=result.data;
+  error=result.error;
+
+  if(error){
+   const retry=await supabase
+    .from("conversations")
+    .select("id")
+    .eq("user_one",first)
+    .eq("user_two",second)
+    .maybeSingle();
+
+   conversation=retry.data;
+   error=retry.error;
+  }
+ }
+
+ if(error||!conversation){
+  console.error(error);
+  toast("Не удалось создать диалог.");
+  return;
+ }
+
+ $("#userSearch").value="";
+ $("#searchResults").innerHTML="";
+
+ const chat={
+  id:conversation.id,
+  userId:profile.id,
+  username:profile.username||"user",
+  name:profile.display_name||"Пользователь"
+ };
+
+ await loadConversations();
+ await openConversation(chat);
+}
+
+/* КНОПКА НОВОГО ЧАТА */
+$("#newChat").addEventListener("click",()=>{
+ $("#userSearch").focus();
+ toast("Введи никнейм пользователя в поиске.");
+});
+
+/* ОТПРАВКА СООБЩЕНИЙ */
+$("#sendForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+
+ const input=$("#messageInput");
+ const body=input.value.trim();
+ const conversationId=activeConversationId;
+
+ if(!body||!currentUser||!conversationId)return;
+
+ $("#sendButton").disabled=true;
+
+ const {error}=await supabase
+  .from("messages")
+  .insert({
+   conversation_id:conversationId,
+   sender_id:currentUser.id,
+   body:body.slice(0,4000)
+  });
+
+ $("#sendButton").disabled=!activeConversationId;
+
+ if(error){
+  console.error(error);
+  toast("Не удалось отправить сообщение.");
+  return;
+ }
+
+ input.value="";
+ input.focus();
 });
 
 await refreshSession();
