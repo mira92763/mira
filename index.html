@@ -376,6 +376,184 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const SUPABASE_URL="https://aiomseluuuopovkwiiru.supabase.co";
 const SUPABASE_KEY="sb_publishable_MewA7V5WkT2z1UlbVT20vg_p7TfEtlT";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+/* ==============================
+   MIRA PUSH NOTIFICATIONS
+================================ */
+
+const VAPID_PUBLIC_KEY =
+"BDg34bps15kHFH_bvtDCd06dRUV2EKTfghO01UhB2LDUcdpESnMQ8M0q1ej6n0ers90lhqV41HPBpaSmBoUDyr4";
+
+let miraServiceWorker = null;
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat(
+    (4 - base64String.length % 4) % 4
+  );
+
+  const base64 = (base64String + padding)
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = atob(base64);
+
+  return Uint8Array.from(
+    [...rawData].map(char => char.charCodeAt(0))
+  );
+}
+
+async function registerMiraServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("Service Worker не поддерживается");
+  }
+
+  miraServiceWorker = await navigator.serviceWorker.register(
+    "/mira/service-worker.js",
+    { scope: "/mira/" }
+  );
+
+  await navigator.serviceWorker.ready;
+
+  return miraServiceWorker;
+}
+
+async function savePushSubscription(subscription) {
+  if (!currentUser) {
+    throw new Error("Пользователь не авторизован");
+  }
+
+  const subscriptionJSON = subscription.toJSON();
+
+  const p256dh = subscriptionJSON.keys?.p256dh;
+  const auth = subscriptionJSON.keys?.auth;
+
+  if (!subscription.endpoint || !p256dh || !auth) {
+    throw new Error("Не удалось получить данные Push-подписки");
+  }
+
+  const { error } = await supabase
+    .from("push_subscriptions")
+    .upsert({
+      user_id: currentUser.id,
+      endpoint: subscription.endpoint,
+      p256dh,
+      auth
+    }, {
+      onConflict: "endpoint"
+    });
+
+  if (error) {
+    console.error("MIRA Push DB:", error);
+    throw error;
+  }
+
+  return true;
+}
+
+async function enableMiraPush() {
+  if (!currentUser) {
+    throw new Error("Сначала войди в MIRA");
+  }
+
+  if (!("Notification" in window)) {
+    throw new Error("Устройство не поддерживает уведомления");
+  }
+
+  if (!("PushManager" in window)) {
+    throw new Error(
+      "Push не поддерживается в этом режиме браузера. " +
+      "На iPhone установи MIRA на экран Домой."
+    );
+  }
+
+  const permission = await Notification.requestPermission();
+
+  if (permission !== "granted") {
+    throw new Error("Разрешение на уведомления не предоставлено");
+  }
+
+  const registration = await registerMiraServiceWorker();
+
+  let subscription =
+    await registration.pushManager.getSubscription();
+
+  if (!subscription) {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey:
+        urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+  }
+
+  await savePushSubscription(subscription);
+
+  return true;
+}
+
+async function updatePushStatus() {
+  const status = $("#pushStatus");
+  const button = $("#enablePushBtn");
+
+  if (!status || !button) return;
+
+  if (!("Notification" in window)) {
+    status.textContent = "Уведомления не поддерживаются";
+    return;
+  }
+
+  if (Notification.permission === "denied") {
+    status.textContent =
+      "Уведомления заблокированы в настройках браузера";
+    return;
+  }
+
+  if (Notification.permission === "granted") {
+    try {
+      const registration = await registerMiraServiceWorker();
+
+      const subscription =
+        await registration.pushManager.getSubscription();
+
+      if (subscription && currentUser) {
+        await savePushSubscription(subscription);
+
+        status.textContent = "Уведомления MIRA включены";
+        button.textContent = "Обновить регистрацию";
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  status.textContent = "Уведомления пока не включены";
+}
+
+$("#enablePushBtn").addEventListener("click", async () => {
+  const button = $("#enablePushBtn");
+
+  button.disabled = true;
+  button.textContent = "Подключаем...";
+
+  try {
+    await enableMiraPush();
+
+    $("#pushStatus").textContent =
+      "Уведомления успешно подключены к MIRA!";
+
+    button.textContent = "Уведомления включены";
+
+    toast("Push-уведомления активированы!");
+  } catch (error) {
+    console.error("MIRA Push Error:", error);
+
+    $("#pushStatus").textContent = error.message;
+    button.textContent = "Повторить подключение";
+
+    toast("Ошибка подключения уведомлений");
+  } finally {
+    button.disabled = false;
+  }
+});
 
 const authScreen=$("#authScreen");
 const app=$("#app");
@@ -581,6 +759,11 @@ function stopChatChannels(){
 async function startChats(user){
  stopChatChannels();
  currentUser=user;
+ registerMiraServiceWorker()
+  .then(() => updatePushStatus())
+  .catch(error => {
+    console.error("MIRA Service Worker:", error);
+  });
 
  $("#chatList").innerHTML='<div class="empty-state">Загружаем диалоги...</div>';
  $("#searchResults").innerHTML="";
