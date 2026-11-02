@@ -246,19 +246,52 @@ header{height:68px}
 
 <section class="view" id="settings">
 <div class="heading"><h1>Настройки</h1></div>
+
 <div class="box">
 <p><b>🎨 Оформление</b></p>
+
 <div class="theme-picker" id="themePicker" tabindex="0">
 <button type="button" class="theme-arrow" id="themePrev">‹</button>
+
 <div class="theme-choice">
-<div class="theme-preview" id="themePreview"><i></i><i></i><i></i></div>
+<div class="theme-preview" id="themePreview">
+<i></i><i></i><i></i>
+</div>
 <b id="themeName">Тёмная</b>
 <div class="muted small">Свайпните влево или вправо</div>
 </div>
+
 <button type="button" class="theme-arrow" id="themeNext">›</button>
 </div>
+
 <div class="theme-dots" id="themeDots"></div>
-<p class="muted small" style="text-align:center">Можно также нажимать на стрелки.</p>
+<p class="muted small" style="text-align:center">
+Можно также нажимать на стрелки.
+</p>
+</div>
+
+<!-- PUSH NOTIFICATIONS -->
+<div class="box" style="margin-top:15px">
+<p><b>🔔 Push-уведомления</b></p>
+
+<p class="muted small">
+Получай уведомления MIRA о новых сообщениях,
+даже когда приложение закрыто.
+</p>
+
+<button class="btn" id="enablePushBtn" type="button">
+Включить уведомления
+</button>
+
+<div class="muted small" id="pushStatus" style="margin-top:12px">
+Проверяем поддержку уведомлений...
+</div>
+</div>
+
+<div class="notice">
+Версия 0.4 · Регистрация, профили и личные сообщения через Supabase.
+</div>
+</section> </p>
 </div>
 <div class="notice">Версия 0.4 · Регистрация, профили и личные сообщения через Supabase.</div>
 </section>
