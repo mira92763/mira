@@ -1,0 +1,9 @@
+{
+  "name": "MIRA",
+  "short_name": "MIRA",
+  "start_url": "/mira/",
+  "scope": "/mira/",
+  "display": "standalone",
+  "background_color": "#10111a",
+  "theme_color": "#10111a"
+}
