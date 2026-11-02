@@ -626,30 +626,6 @@ $("#enablePushBtn").addEventListener("click", async () => {
     button.disabled = false;
   }
 });
-    }
-
-    button.textContent = "Сохраняем в Supabase...";
-    status.textContent = "Сохранение подписки";
-
-    await savePushSubscription(subscription);
-
-    status.textContent = "Уведомления MIRA подключены!";
-    button.textContent = "Уведомления включены";
-
-    toast("Push-уведомления активированы!");
-
-  } catch (error) {
-    console.error("MIRA PUSH:", error);
-
-    status.textContent = "Ошибка: " + error.message;
-    button.textContent = "Повторить подключение";
-
-    toast("Ошибка подключения Push");
-
-  } finally {
-    button.disabled = false;
-  }
-});
 
 const authScreen=$("#authScreen");
 const app=$("#app");
