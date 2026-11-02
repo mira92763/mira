@@ -530,26 +530,64 @@ async function updatePushStatus() {
 
 $("#enablePushBtn").addEventListener("click", async () => {
   const button = $("#enablePushBtn");
+  const status = $("#pushStatus");
 
   button.disabled = true;
-  button.textContent = "Подключаем...";
 
   try {
-    await enableMiraPush();
+    button.textContent = "Проверяем браузер...";
+    status.textContent = "Проверка поддержки Push";
 
-    $("#pushStatus").textContent =
-      "Уведомления успешно подключены к MIRA!";
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("Service Worker не поддерживается");
+    }
 
+    button.textContent = "Регистрируем приложение...";
+    status.textContent = "Регистрация Service Worker";
+
+    const registration = await registerMiraServiceWorker();
+
+    button.textContent = "Запрашиваем разрешение...";
+    status.textContent = "Ожидаем разрешение браузера";
+
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      throw new Error("Разрешение не предоставлено");
+    }
+
+    button.textContent = "Создаём подписку...";
+    status.textContent = "Создание Push-подписки";
+
+    let subscription =
+      await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey:
+          urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+
+    button.textContent = "Сохраняем в Supabase...";
+    status.textContent = "Сохранение подписки";
+
+    await savePushSubscription(subscription);
+
+    status.textContent = "Уведомления MIRA подключены!";
     button.textContent = "Уведомления включены";
 
     toast("Push-уведомления активированы!");
-  } catch (error) {
-    console.error("MIRA Push Error:", error);
 
-    $("#pushStatus").textContent = error.message;
+  } catch (error) {
+    console.error("MIRA PUSH:", error);
+
+    status.textContent = "Ошибка: " + error.message;
     button.textContent = "Повторить подключение";
 
-    toast("Ошибка подключения уведомлений");
+    toast("Ошибка подключения Push");
+
   } finally {
     button.disabled = false;
   }
