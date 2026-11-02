@@ -1,9 +1,18 @@
 {
+  "id": "/mira/",
   "name": "MIRA",
   "short_name": "MIRA",
+  "description": "MIRA — Новое время, большие амбиции",
   "start_url": "/mira/",
   "scope": "/mira/",
   "display": "standalone",
   "background_color": "#10111a",
-  "theme_color": "#10111a"
+  "theme_color": "#10111a",
+  "icons": [
+    {
+      "src": "/mira/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
