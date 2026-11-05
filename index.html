@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,1188 +8,185 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MIRA">
-<title>MIRA 0.5 — Новое время, большие амбиции</title>
+<title>MIRA 0.6 — Новое время, большие амбиции</title>
 <style>
 :root{--bg:#10111a;--panel:#191b29;--panel2:#222538;--line:#30344a;--text:#f4f3ff;--muted:#999db4;--accent:#8c7cf6;--accent2:#6557cf}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 80% -10%,#302957 0,transparent 40%),var(--bg);color:var(--text);font:15px Inter,system-ui,sans-serif;min-height:100vh}
-button,input{font:inherit}
-button{cursor:pointer;color:inherit;border:0}
-.hidden{display:none!important}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#302957 0,transparent 40%),var(--bg);color:var(--text);font:15px Inter,system-ui,sans-serif;min-height:100vh}
+button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}.hidden{display:none!important}
 .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#b5a9ff,#6557cf);display:grid;place-items:center;color:white;font-size:24px;font-weight:900}
-.brand-name{font-weight:900;letter-spacing:5px;font-size:22px}
-.tagline{font-size:11px;color:var(--muted);margin-top:3px}
-.field{width:100%;min-width:0;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;outline:none}
-.field:focus{border-color:var(--accent)}
-.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:11px 16px;border-radius:12px;font-weight:700}
-.btn:disabled{opacity:.6;cursor:wait}
-.btn.secondary{background:var(--panel2);border:1px solid var(--line)}
-.muted{color:var(--muted)}
-.small{font-size:12px}
-.formrow{margin:13px 0;text-align:left}
-.formrow label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
-.auth-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
-.auth-card{width:min(100%,430px);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 24px 80px #0005}
-.auth-brand{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:25px}
-.auth-card h1{text-align:center;font-size:23px;margin:0 0 7px}
-.auth-sub{text-align:center;color:var(--muted);font-size:13px;margin:0 0 22px}
-.auth-submit{width:100%;margin-top:8px}
-.auth-switch{text-align:center;color:var(--muted);font-size:13px;margin:18px 0 0}
-.link-btn{background:none;color:#b8adff;font-weight:700;padding:4px}
-.auth-message{display:none;margin-top:14px;padding:12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:13px;line-height:1.5}
-.auth-message.show{display:block}
-.auth-message.error{border-color:#b65c70;color:#ffc1ce}
-.auth-message.success{border-color:#4d9b72;color:#baf0ce}
-.app{max-width:1180px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:0 20px}
-header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff13}
-.brand{display:flex;align-items:center;gap:12px}
-.header-user{display:flex;align-items:center;gap:10px}
-.online{font-size:12px;color:#a8e7c1}
-.online:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#65d99a;margin-right:7px}
-.layout{display:grid;grid-template-columns:220px 1fr;gap:20px;padding:22px 0;flex:1}
-.sidebar,.content{background:var(--panel);border:1px solid var(--line);border-radius:20px}
-.sidebar{padding:14px;height:max-content;position:sticky;top:15px}
-.nav{width:100%;text-align:left;padding:13px;border-radius:12px;background:transparent;color:var(--muted);margin:3px 0}
-.nav.active,.nav:hover{background:var(--panel2);color:var(--text)}
-.nav span{display:inline-block;width:28px}
-.side-note{border-top:1px solid var(--line);margin-top:15px;padding:15px 8px 5px;color:var(--muted);font-size:11px;line-height:1.6}
-.content{min-height:650px;padding:24px}
-.view{display:none}
-.view.active{display:block}
-.heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px}
-.heading h1{font-size:24px;margin:0}
-.chat-layout{display:grid;grid-template-columns:minmax(190px,.8fr) 1.4fr;gap:14px}
-.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;min-width:0}
-.chat-list{display:flex;flex-direction:column;gap:5px}
-.chat-item{background:transparent;text-align:left;padding:12px;border-radius:12px;display:flex;align-items:center;gap:10px;width:100%;min-width:0}
-.chat-item.active,.chat-item:hover,.search-result:hover{background:var(--panel2)}
-.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#a98cf5,#4d9fba);font-weight:800;flex:none}
-.chat-main{display:flex;flex-direction:column;min-height:440px}
-.chat-top{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:4px 4px 13px;min-width:0}
-.chat-top>div:last-child{min-width:0;overflow-wrap:anywhere}
-.messages{padding:16px 2px;display:flex;flex-direction:column;gap:10px;flex:1;overflow:auto;max-height:420px;min-height:250px}
-.bubble{max-width:80%;background:var(--panel2);padding:10px 13px;border-radius:14px 14px 14px 4px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-wrap}
-.bubble.mine{align-self:flex-end;background:var(--accent2);border-radius:14px 14px 4px 14px}
-.send{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:12px}
-.send .field{flex:1}
-.profile-card{text-align:center;max-width:480px;margin:auto;padding:28px}
-.profile-avatar{width:86px;height:86px;margin:0 auto 12px;font-size:30px}
-.notice{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;line-height:1.5;margin-top:18px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent);padding:12px 18px;border-radius:12px;display:none;z-index:5;max-width:90%;text-align:center}
-.toast.show{display:block}
+.brand-name{font-weight:900;letter-spacing:5px;font-size:22px}.tagline{font-size:11px;color:var(--muted);margin-top:3px}
+.field{width:100%;min-width:0;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;outline:none}.field:focus{border-color:var(--accent)}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:11px 16px;border-radius:12px;font-weight:700}.btn:disabled{opacity:.6;cursor:wait}.btn.secondary{background:var(--panel2);border:1px solid var(--line)}.btn.danger{background:#8e354c}
+.muted{color:var(--muted)}.small{font-size:12px}.formrow{margin:13px 0;text-align:left}.formrow label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.auth-screen{min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card{width:min(100%,430px);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 24px 80px #0005}
+.auth-brand{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:25px}.auth-card h1{text-align:center;font-size:23px;margin:0 0 7px}.auth-sub{text-align:center;color:var(--muted);font-size:13px;margin:0 0 22px}
+.auth-submit{width:100%;margin-top:8px}.auth-switch{text-align:center;color:var(--muted);font-size:13px;margin:18px 0 0}.link-btn{background:none;color:#b8adff;font-weight:700;padding:4px}
+.auth-message{display:none;margin-top:14px;padding:12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:13px;line-height:1.5}.auth-message.show{display:block}.auth-message.error{border-color:#b65c70;color:#ffc1ce}.auth-message.success{border-color:#4d9b72;color:#baf0ce}
+.app{max-width:1180px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:0 20px}header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff13}
+.brand{display:flex;align-items:center;gap:12px}.header-user{display:flex;align-items:center;gap:10px}.online{font-size:12px;color:#a8e7c1}.online:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#65d99a;margin-right:7px}
+.layout{display:grid;grid-template-columns:220px 1fr;gap:20px;padding:22px 0;flex:1}.sidebar,.content{background:var(--panel);border:1px solid var(--line);border-radius:20px}.sidebar{padding:14px;height:max-content;position:sticky;top:15px}
+.nav{width:100%;text-align:left;padding:13px;border-radius:12px;background:transparent;color:var(--muted);margin:3px 0}.nav.active,.nav:hover{background:var(--panel2);color:var(--text)}.nav span{display:inline-block;width:28px}
+.side-note{border-top:1px solid var(--line);margin-top:15px;padding:15px 8px 5px;color:var(--muted);font-size:11px;line-height:1.6}.content{min-height:650px;padding:24px}.view{display:none}.view.active{display:block}
+.heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px}.heading h1{font-size:24px;margin:0}
+.chat-layout{display:grid;grid-template-columns:minmax(190px,.8fr) 1.4fr;gap:14px}.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;min-width:0}
+.chat-list{display:flex;flex-direction:column;gap:5px}.chat-item{background:transparent;text-align:left;padding:12px;border-radius:12px;display:flex;align-items:center;gap:10px;width:100%;min-width:0}.chat-item.active,.chat-item:hover,.search-result:hover{background:var(--panel2)}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#a98cf5,#4d9fba);font-weight:800;flex:none;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}
+.chat-main{display:flex;flex-direction:column;min-height:440px}.chat-top{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:4px 4px 13px;min-width:0}.chat-top>div:last-child{min-width:0;overflow-wrap:anywhere}
+.messages{padding:16px 2px;display:flex;flex-direction:column;gap:10px;flex:1;overflow:auto;max-height:480px;min-height:250px}
+.bubble{max-width:85%;background:var(--panel2);padding:10px 13px;border-radius:14px 14px 14px 4px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-wrap}.bubble.mine{align-self:flex-end;background:var(--accent2);border-radius:14px 14px 4px 14px}
+.bubble.deleted{opacity:.7;font-style:italic}.message-meta{font-size:10px;opacity:.75;margin-top:5px}.message-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.message-actions button{font-size:11px;background:#0002;border:1px solid #ffffff25;border-radius:8px;padding:5px 7px}
+.send{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:12px}.send .field{flex:1}
+.profile-card{text-align:center;max-width:560px;margin:auto;padding:28px}.profile-avatar{width:86px;height:86px;margin:0 auto 12px;font-size:30px}.notice{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;line-height:1.5;margin-top:18px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent);padding:12px 18px;border-radius:12px;display:none;z-index:20;max-width:90%;text-align:center}.toast.show{display:block}
 .theme-picker{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;touch-action:pan-y;user-select:none}
-.theme-choice{flex:1;text-align:center;min-width:0;padding:5px}
-.theme-arrow{width:38px;height:38px;border-radius:12px;background:var(--panel);font-size:27px;flex:none}
+.theme-choice{flex:1;text-align:center;min-width:0;padding:5px}.theme-arrow{width:38px;height:38px;border-radius:12px;background:var(--panel);font-size:27px;flex:none}
 .theme-preview{height:62px;max-width:180px;margin:0 auto 10px;border-radius:12px;padding:9px;display:flex;flex-direction:column;gap:5px;background:#10111a;border:1px solid #444}
-.theme-preview i{display:block;height:8px;width:70%;border-radius:8px;background:#8c7cf6}
-.theme-preview i:nth-child(2){width:48%}
-.theme-preview i:nth-child(3){width:60%}
-.theme-dots{display:flex;justify-content:center;gap:7px;margin:12px}
-.theme-dots span{width:7px;height:7px;border-radius:50%;background:#555}
-.theme-dots span.selected{background:var(--accent);width:19px;border-radius:8px}
-.search-result{display:flex;align-items:center;gap:10px;padding:10px;width:100%;border-radius:12px;background:transparent;text-align:left;min-width:0}
-.search-result .avatar{width:36px;height:36px}
-.search-result>div:last-child,.chat-item>div:last-child{min-width:0;overflow-wrap:anywhere}
-.empty-state{color:var(--muted);font-size:12px;text-align:center;padding:18px 8px;line-height:1.5}
-#userSearch{margin-bottom:5px}
-@media(max-width:760px){
-.app{padding:0 10px}
-header{height:68px}
-.layout{grid-template-columns:1fr;gap:12px;padding:12px 0}
-.sidebar{position:static;display:flex;overflow:auto;padding:7px;gap:5px}
-.nav{white-space:nowrap;width:auto;margin:0;padding:10px}
-.nav span{width:auto;margin-right:5px}
-.side-note{display:none}
-.content{padding:15px;min-height:620px}
-.chat-layout{grid-template-columns:1fr}
-.chat-list{display:flex}
-.chat-item{padding:8px;flex-direction:row;text-align:left;font-size:13px}
-.chat-item .preview{display:block}
-.chat-main{min-height:390px}
-.heading h1{font-size:21px}
-.header-user .muted{display:none}
-.auth-card{padding:22px}
-}
+.theme-preview i{display:block;height:8px;width:70%;border-radius:8px;background:#8c7cf6}.theme-preview i:nth-child(2){width:48%}.theme-preview i:nth-child(3){width:60%}
+.theme-dots{display:flex;justify-content:center;gap:7px;margin:12px}.theme-dots span{width:7px;height:7px;border-radius:50%;background:#555}.theme-dots span.selected{background:var(--accent);width:19px;border-radius:8px}
+.search-result{display:flex;align-items:center;gap:10px;padding:10px;width:100%;border-radius:12px;background:transparent;text-align:left;min-width:0}.search-result .avatar{width:36px;height:36px}
+.search-result>div:last-child,.chat-item>div:last-child{min-width:0;overflow-wrap:anywhere}.empty-state{color:var(--muted);font-size:12px;text-align:center;padding:18px 8px;line-height:1.5}#userSearch{margin-bottom:5px}
+.profile-form{max-width:560px;margin:18px auto 0;text-align:left}.profile-form textarea{min-height:90px;resize:vertical}.profile-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+@media(max-width:760px){.app{padding:0 10px}header{height:68px}.layout{grid-template-columns:1fr;gap:12px;padding:12px 0}.sidebar{position:static;display:flex;overflow:auto;padding:7px;gap:5px}.nav{white-space:nowrap;width:auto;margin:0;padding:10px}.nav span{width:auto;margin-right:5px}.side-note{display:none}.content{padding:15px;min-height:620px}.chat-layout{grid-template-columns:1fr}.chat-list{display:flex}.chat-item{padding:8px;flex-direction:row;text-align:left;font-size:13px}.chat-main{min-height:390px}.heading h1{font-size:21px}.header-user .muted{display:none}.auth-card{padding:22px}}
 </style>
 </head>
 <body>
-
 <section class="auth-screen" id="authScreen">
-<div class="auth-card">
-<div class="auth-brand">
-<div class="logo">M</div>
-<div>
-<div class="brand-name">MIRA</div>
-<div class="tagline">Новое время — большие амбиции.</div>
-</div>
-</div>
-
-<div id="registerPanel">
-<h1>Создать аккаунт</h1>
-<p class="auth-sub">Присоединяйся к MIRA</p>
-<form id="registerForm">
-<div class="formrow">
-<label for="regName">Имя</label>
-<input class="field" id="regName" maxlength="40" required placeholder="Как тебя называть?">
-</div>
-<div class="formrow">
-<label for="regUsername">Уникальный никнейм</label>
-<input class="field" id="regUsername" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" required placeholder="например, mira_user">
-<div class="muted small">3–20 символов: латинские буквы, цифры и _</div>
-</div>
-<div class="formrow">
-<label for="regEmail">Email</label>
-<input class="field" id="regEmail" type="email" required placeholder="you@example.com">
-</div>
-<div class="formrow">
-<label for="regPassword">Пароль</label>
-<input class="field" id="regPassword" type="password" minlength="8" required placeholder="Не менее 8 символов">
-</div>
-<button class="btn auth-submit" id="registerSubmit">Создать аккаунт</button>
-</form>
-<p class="auth-switch">Уже есть аккаунт? <button class="link-btn" id="showLogin" type="button">Войти</button></p>
-</div>
-
-<div id="loginPanel" class="hidden">
-<h1>С возвращением</h1>
-<p class="auth-sub">Войди в свой аккаунт MIRA</p>
-<form id="loginForm">
-<div class="formrow">
-<label for="loginEmail">Email</label>
-<input class="field" id="loginEmail" type="email" required placeholder="you@example.com">
-</div>
-<div class="formrow">
-<label for="loginPassword">Пароль</label>
-<input class="field" id="loginPassword" type="password" required placeholder="Твой пароль">
-</div>
-<button class="btn auth-submit" id="loginSubmit">Войти</button>
-</form>
-<p class="auth-switch">Ещё нет аккаунта? <button class="link-btn" id="showRegister" type="button">Зарегистрироваться</button></p>
-</div>
-
-<div class="auth-message" id="authMessage" role="status"></div>
-</div>
+ <div class="auth-card">
+  <div class="auth-brand"><div class="logo">M</div><div><div class="brand-name">MIRA</div><div class="tagline">Новое время — большие амбиции.</div></div></div>
+  <div id="registerPanel">
+   <h1>Создать аккаунт</h1><p class="auth-sub">Присоединяйся к MIRA</p>
+   <form id="registerForm">
+    <div class="formrow"><label for="regName">Имя</label><input class="field" id="regName" maxlength="40" required placeholder="Как тебя называть?"></div>
+    <div class="formrow"><label for="regUsername">Уникальный никнейм</label><input class="field" id="regUsername" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" required placeholder="например, mira_user"><div class="muted small">3–20 символов: латинские буквы, цифры и _</div></div>
+    <div class="formrow"><label for="regEmail">Email</label><input class="field" id="regEmail" type="email" required placeholder="you@example.com"></div>
+    <div class="formrow"><label for="regPassword">Пароль</label><input class="field" id="regPassword" type="password" minlength="8" required placeholder="Не менее 8 символов"></div>
+    <button class="btn auth-submit" id="registerSubmit">Создать аккаунт</button>
+   </form>
+   <p class="auth-switch">Уже есть аккаунт? <button class="link-btn" id="showLogin" type="button">Войти</button></p>
+  </div>
+  <div id="loginPanel" class="hidden">
+   <h1>С возвращением</h1><p class="auth-sub">Войди в свой аккаунт MIRA</p>
+   <form id="loginForm"><div class="formrow"><label for="loginEmail">Email</label><input class="field" id="loginEmail" type="email" required placeholder="you@example.com"></div><div class="formrow"><label for="loginPassword">Пароль</label><input class="field" id="loginPassword" type="password" required placeholder="Твой пароль"></div><button class="btn auth-submit" id="loginSubmit">Войти</button></form>
+   <p class="auth-switch">Ещё нет аккаунта? <button class="link-btn" id="showRegister" type="button">Зарегистрироваться</button></p>
+  </div>
+  <div class="auth-message" id="authMessage" role="status"></div>
+ </div>
 </section>
-
 <div class="app hidden" id="app">
-<header>
-<div class="brand">
-<div class="logo">M</div>
-<div>
-<div class="brand-name">MIRA</div>
-<div class="tagline">Новое время — большие амбиции.</div>
+ <header><div class="brand"><div class="logo">M</div><div><div class="brand-name">MIRA</div><div class="tagline">Новое время — большие амбиции.</div></div></div>
+  <div class="header-user"><div class="online">В сети</div><span class="muted" id="headerUsername"></span><button class="btn secondary" id="logoutBtn" type="button">Выйти</button></div>
+ </header>
+ <div class="layout">
+  <aside class="sidebar"><button class="nav active" data-view="chats"><span>▤</span>Чаты</button><button class="nav" data-view="profile"><span>◉</span>Профиль</button><button class="nav" data-view="settings"><span>⚙</span>Настройки</button><div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div></aside>
+  <main class="content">
+   <section class="view active" id="chats">
+    <div class="heading"><div><h1>Сообщения</h1><div class="muted small">Твои диалоги в одном месте</div></div><button class="btn secondary" id="newChat" type="button">＋ Новый чат</button></div>
+    <div class="chat-layout">
+     <div class="box"><div class="muted small" style="padding:7px 8px 10px">ПОИСК ПОЛЬЗОВАТЕЛЕЙ</div><input class="field" id="userSearch" placeholder="Введи @никнейм..." autocomplete="off"><div id="searchResults" class="chat-list" style="margin-top:10px"></div><div class="muted small" style="padding:16px 8px 10px">МОИ ДИАЛОГИ</div><div class="chat-list" id="chatList"></div></div>
+     <div class="box chat-main"><div class="chat-top"><div class="avatar" id="activeAvatar">M</div><div><b id="activeName">Выбери диалог</b><div class="muted small" id="activeUsername">Личные сообщения MIRA</div></div></div>
+      <div class="messages" id="messages"><div class="empty-state">Найди пользователя и начни общение.</div></div>
+      <form class="send" id="sendForm"><input class="field" id="messageInput" maxlength="4000" placeholder="Написать сообщение…" autocomplete="off" disabled><button class="btn" id="sendButton" disabled>➤</button></form>
+     </div>
+    </div>
+    <div class="notice">MIRA 0.6 · Личные переписки сохраняются в Supabase и доступны с разных устройств.</div>
+   </section>
+   <section class="view" id="profile">
+    <div class="heading"><h1>Профиль</h1></div>
+    <div class="box profile-card"><div class="avatar profile-avatar" id="profileAvatar">M</div><h2 id="profileName" style="margin:0 0 4px">Пользователь</h2><div class="muted" id="profileNick">@username</div><p class="muted small" id="profileBio"></p><p class="muted small" id="profileEmail"></p><div class="notice">Профиль хранится в базе MIRA.</div>
+     <form class="profile-form" id="profileForm">
+      <div class="formrow"><label for="editDisplayName">Имя</label><input class="field" id="editDisplayName" maxlength="40" required></div>
+      <div class="formrow"><label for="editUsername">Никнейм</label><input class="field" id="editUsername" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" required><div class="muted small">3–20 символов: латинские буквы, цифры и _</div></div>
+      <div class="formrow"><label for="editBio">О себе</label><textarea class="field" id="editBio" maxlength="160" placeholder="Немного о себе (до 160 символов)"></textarea></div>
+      <div class="formrow"><label for="avatarFile">Фотография профиля (JPG, PNG или WebP, до 5 МБ)</label><input class="field" id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp"></div>
+      <div class="profile-actions"><button class="btn" id="saveProfileBtn">Сохранить профиль</button></div>
+     </form>
+    </div>
+   </section>
+   <section class="view" id="settings">
+    <div class="heading"><h1>Настройки</h1></div>
+    <div class="box"><p><b>🎨 Оформление</b></p><div class="theme-picker" id="themePicker" tabindex="0"><button type="button" class="theme-arrow" id="themePrev">‹</button><div class="theme-choice"><div class="theme-preview" id="themePreview"><i></i><i></i><i></i></div><b id="themeName">Тёмная</b><div class="muted small">Свайпните влево или вправо</div></div><button type="button" class="theme-arrow" id="themeNext">›</button></div><div class="theme-dots" id="themeDots"></div><p class="muted small" style="text-align:center">Можно также нажимать на стрелки.</p></div>
+    <div class="box" style="margin-top:15px"><p><b>🔔 Push-уведомления</b></p><p class="muted small">Получай уведомления MIRA о новых сообщениях, даже когда приложение закрыто.</p><button class="btn" id="enablePushBtn" type="button">Включить уведомления</button><div class="muted small" id="pushStatus" style="margin-top:12px">Проверяем поддержку уведомлений...</div></div>
+    <div class="notice">Версия 0.6 · Регистрация, профили и личные сообщения через Supabase.</div>
+   </section>
+  </main>
+ </div>
 </div>
-</div>
-<div class="header-user">
-<div class="online">В сети</div>
-<span class="muted" id="headerUsername"></span>
-<button class="btn secondary" id="logoutBtn" type="button">Выйти</button>
-</div>
-</header>
-
-<div class="layout">
-<aside class="sidebar">
-<button class="nav active" data-view="chats"><span>▤</span>Чаты</button>
-<button class="nav" data-view="profile"><span>◉</span>Профиль</button>
-<button class="nav" data-view="settings"><span>⚙</span>Настройки</button>
-<div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div>
-</aside>
-
-<main class="content">
-<section class="view active" id="chats">
-<div class="heading">
-<div><h1>Сообщения</h1><div class="muted small">Твои диалоги в одном месте</div></div>
-<button class="btn secondary" id="newChat" type="button">＋ Новый чат</button>
-</div>
-
-<div class="chat-layout">
-<div class="box">
-<div class="muted small" style="padding:7px 8px 10px">ПОИСК ПОЛЬЗОВАТЕЛЕЙ</div>
-<input class="field" id="userSearch" placeholder="Введи @никнейм..." autocomplete="off">
-<div id="searchResults" class="chat-list" style="margin-top:10px"></div>
-<div class="muted small" style="padding:16px 8px 10px">МОИ ДИАЛОГИ</div>
-<div class="chat-list" id="chatList"></div>
-</div>
-
-<div class="box chat-main">
-<div class="chat-top">
-<div class="avatar" id="activeAvatar">M</div>
-<div>
-<b id="activeName">Выбери диалог</b>
-<div class="muted small" id="activeUsername">Личные сообщения MIRA</div>
-</div>
-</div>
-<div class="messages" id="messages">
-<div class="empty-state">Найди пользователя и начни общение.</div>
-</div>
-<form class="send" id="sendForm">
-<input class="field" id="messageInput" maxlength="4000" placeholder="Написать сообщение…" autocomplete="off" disabled>
-<button class="btn" id="sendButton" disabled>➤</button>
-</form>
-</div>
-</div>
-
-<div class="notice">MIRA 0.4 · Личные переписки сохраняются в Supabase и доступны с разных устройств.</div>
-</section>
-
-<section class="view" id="profile">
-<div class="heading"><h1>Профиль</h1></div>
-<div class="box profile-card">
-<div class="avatar profile-avatar" id="profileAvatar">M</div>
-<h2 id="profileName" style="margin:0 0 4px">Пользователь</h2>
-<div class="muted" id="profileNick">@username</div>
-<p class="muted small" id="profileEmail"></p>
-<div class="notice">Профиль хранится в базе MIRA.</div>
-</div>
-</section>
-
-<section class="view" id="settings">
-<div class="heading"><h1>Настройки</h1></div>
-
-<div class="box">
-<p><b>🎨 Оформление</b></p>
-
-<div class="theme-picker" id="themePicker" tabindex="0">
-<button type="button" class="theme-arrow" id="themePrev">‹</button>
-
-<div class="theme-choice">
-<div class="theme-preview" id="themePreview">
-<i></i><i></i><i></i>
-</div>
-<b id="themeName">Тёмная</b>
-<div class="muted small">Свайпните влево или вправо</div>
-</div>
-
-<button type="button" class="theme-arrow" id="themeNext">›</button>
-</div>
-
-<div class="theme-dots" id="themeDots"></div>
-<p class="muted small" style="text-align:center">
-Можно также нажимать на стрелки.
-</p>
-</div>
-
-<!-- PUSH NOTIFICATIONS -->
-<div class="box" style="margin-top:15px">
-<p><b>🔔 Push-уведомления</b></p>
-
-<p class="muted small">
-Получай уведомления MIRA о новых сообщениях,
-даже когда приложение закрыто.
-</p>
-
-<button class="btn" id="enablePushBtn" type="button">
-Включить уведомления
-</button>
-
-<div class="muted small" id="pushStatus" style="margin-top:12px">
-Проверяем поддержку уведомлений...
-</div>
-</div>
-
-<div class="notice">
-Версия 0.4 · Регистрация, профили и личные сообщения через Supabase.
-</div>
-</section> </p>
-</div>
-<div class="notice">Версия 0.4 · Регистрация, профили и личные сообщения через Supabase.</div>
-</section>
-</main>
-</div>
-</div>
-
 <div class="toast" id="toast"></div>
-
 <script>
 "use strict";
-
-const $ = s => document.querySelector(s);
-
-function readStore(k,f){
- try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}
- catch(_){return f}
-}
-function saveStore(k,v){
- try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}
-}
-function toast(m){
- const e=$("#toast");
- e.textContent=m;
- e.classList.add("show");
- clearTimeout(toast.timer);
- toast.timer=setTimeout(()=>e.classList.remove("show"),2600);
-}
-
-/* ПЕРЕКЛЮЧЕНИЕ РАЗДЕЛОВ */
-document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{
- document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
- $("#"+b.dataset.view).classList.add("active");
- document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n===b));
-}));
-
-/* ТЕМЫ */
+const $=s=>document.querySelector(s);
+function readStore(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(_){return f}}
+function saveStore(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>e.classList.remove("show"),2800)}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$("#"+b.dataset.view).classList.add("active");document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n===b))}));
 const themes=[
- {name:"Тёмная",vars:{"--bg":"#10111a","--panel":"#191b29","--panel2":"#222538","--line":"#30344a","--text":"#f4f3ff","--muted":"#999db4","--accent":"#8c7cf6","--accent2":"#6557cf"},preview:"#10111a",accent:"#8c7cf6"},
- {name:"Светлая",vars:{"--bg":"#eef0f8","--panel":"#ffffff","--panel2":"#e5e8f3","--line":"#d5d9e8","--text":"#202238","--muted":"#68708a","--accent":"#7566df","--accent2":"#5548bd"},preview:"#eef0f8",accent:"#7566df"},
- {name:"Полночь",vars:{"--bg":"#090d19","--panel":"#111a2b","--panel2":"#19263c","--line":"#293c59","--text":"#edf5ff","--muted":"#91a6c1","--accent":"#43a9c9","--accent2":"#3867b8"},preview:"#090d19",accent:"#43a9c9"}
-];
-let themeIndex=Number(readStore("mira_theme_v1",0));
-if(!Number.isInteger(themeIndex)||themeIndex<0||themeIndex>=themes.length)themeIndex=0;
-
-function setTheme(i){
- themeIndex=(i+themes.length)%themes.length;
- const t=themes[themeIndex];
- Object.entries(t.vars).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
- $("#themeName").textContent=t.name;
- $("#themePreview").style.background=t.preview;
- $("#themePreview").style.borderColor=t.accent;
- $("#themePreview").querySelectorAll("i").forEach((x,j)=>x.style.background=j===1?"var(--panel)":t.accent);
- $("#themeDots").innerHTML=themes.map((_,j)=>`<span class="${j===themeIndex?"selected":""}"></span>`).join("");
- saveStore("mira_theme_v1",themeIndex);
-}
-$("#themePrev").addEventListener("click",()=>setTheme(themeIndex-1));
-$("#themeNext").addEventListener("click",()=>setTheme(themeIndex+1));
-const picker=$("#themePicker");
-let pointerStart=null;
-picker.addEventListener("pointerdown",e=>{
- if(e.target.closest(".theme-arrow"))return;
- pointerStart={id:e.pointerId,x:e.clientX,y:e.clientY};
-});
-picker.addEventListener("pointerup",e=>{
- if(!pointerStart||e.pointerId!==pointerStart.id)return;
- const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
- pointerStart=null;
- if(Math.abs(dx)>=28&&Math.abs(dx)>Math.abs(dy)*1.15)setTheme(themeIndex+(dx<0?1:-1));
-});
-picker.addEventListener("pointercancel",()=>pointerStart=null);
-picker.addEventListener("keydown",e=>{
- if(e.key==="ArrowRight"){e.preventDefault();setTheme(themeIndex+1)}
- if(e.key==="ArrowLeft"){e.preventDefault();setTheme(themeIndex-1)}
-});
-setTheme(themeIndex);
+{name:"Тёмная",vars:{"--bg":"#10111a","--panel":"#191b29","--panel2":"#222538","--line":"#30344a","--text":"#f4f3ff","--muted":"#999db4","--accent":"#8c7cf6","--accent2":"#6557cf"},preview:"#10111a",accent:"#8c7cf6"},
+{name:"Светлая",vars:{"--bg":"#eef0f8","--panel":"#ffffff","--panel2":"#e5e8f3","--line":"#d5d9e8","--text":"#202238","--muted":"#68708a","--accent":"#7566df","--accent2":"#5548bd"},preview:"#eef0f8",accent:"#7566df"},
+{name:"Полночь",vars:{"--bg":"#090d19","--panel":"#111a2b","--panel2":"#19263c","--line":"#293c59","--text":"#edf5ff","--muted":"#91a6c1","--accent":"#43a9c9","--accent2":"#3867b8"},preview:"#090d19",accent:"#43a9c9"}];
+let themeIndex=Number(readStore("mira_theme_v1",0));if(!Number.isInteger(themeIndex)||themeIndex<0||themeIndex>=themes.length)themeIndex=0;
+function setTheme(i){themeIndex=(i+themes.length)%themes.length;const t=themes[themeIndex];Object.entries(t.vars).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));$("#themeName").textContent=t.name;$("#themePreview").style.background=t.preview;$("#themePreview").style.borderColor=t.accent;$("#themePreview").querySelectorAll("i").forEach((x,j)=>x.style.background=j===1?"var(--panel)":t.accent);$("#themeDots").innerHTML=themes.map((_,j)=>`<span class="${j===themeIndex?"selected":""}"></span>`).join("");saveStore("mira_theme_v1",themeIndex)}
+$("#themePrev").addEventListener("click",()=>setTheme(themeIndex-1));$("#themeNext").addEventListener("click",()=>setTheme(themeIndex+1));
+const picker=$("#themePicker");let pointerStart=null;
+picker.addEventListener("pointerdown",e=>{if(e.target.closest(".theme-arrow"))return;pointerStart={id:e.pointerId,x:e.clientX,y:e.clientY}});
+picker.addEventListener("pointerup",e=>{if(!pointerStart||e.pointerId!==pointerStart.id)return;const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;pointerStart=null;if(Math.abs(dx)>=28&&Math.abs(dx)>Math.abs(dy)*1.15)setTheme(themeIndex+(dx<0?1:-1))});
+picker.addEventListener("pointercancel",()=>pointerStart=null);picker.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){e.preventDefault();setTheme(themeIndex+1)}if(e.key==="ArrowLeft"){e.preventDefault();setTheme(themeIndex-1)}});setTheme(themeIndex);
 </script>
-
 <script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const SUPABASE_URL="https://aiomseluuuopovkwiiru.supabase.co";
 const SUPABASE_KEY="sb_publishable_MewA7V5WkT2z1UlbVT20vg_p7TfEtlT";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
-/* ==============================
-   MIRA PUSH NOTIFICATIONS
-================================ */
-
-const VAPID_PUBLIC_KEY =
-"BDg34bps15kHFH_bvtDCd06dRUV2EKTfghO01UhB2LDUcdpESnMQ8M0q1ej6n0ers90lhqV41HPBpaSmBoUDyr4";
-
-let miraServiceWorker = null;
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = "=".repeat(
-    (4 - base64String.length % 4) % 4
-  );
-
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
-
-  const rawData = atob(base64);
-
-  return Uint8Array.from(
-    [...rawData].map(char => char.charCodeAt(0))
-  );
-}
-
-async function registerMiraServiceWorker() {
-  if (!("serviceWorker" in navigator)) {
-    throw new Error("Service Worker не поддерживается");
-  }
-
-  miraServiceWorker = await navigator.serviceWorker.register(
-    "/mira/service-worker.js",
-    { scope: "/mira/" }
-  );
-
-  await navigator.serviceWorker.ready;
-
-  return miraServiceWorker;
-}
-
-async function savePushSubscription(subscription) {
-  if (!currentUser) {
-    throw new Error("Пользователь не авторизован");
-  }
-
-  const subscriptionJSON = subscription.toJSON();
-
-  const p256dh = subscriptionJSON.keys?.p256dh;
-  const auth = subscriptionJSON.keys?.auth;
-
-  if (!subscription.endpoint || !p256dh || !auth) {
-    throw new Error("Не удалось получить данные Push-подписки");
-  }
-
-  const { error } = await supabase
-    .from("push_subscriptions")
-    .upsert({
-      user_id: currentUser.id,
-      endpoint: subscription.endpoint,
-      p256dh,
-      auth
-    }, {
-      onConflict: "endpoint"
-    });
-
-  if (error) {
-    console.error("MIRA Push DB:", error);
-    throw error;
-  }
-
-  return true;
-}
-
-async function enableMiraPush() {
-  if (!currentUser) {
-    throw new Error("Сначала войди в MIRA");
-  }
-
-  if (!("Notification" in window)) {
-    throw new Error("Устройство не поддерживает уведомления");
-  }
-
-  if (!("PushManager" in window)) {
-    throw new Error(
-      "Push не поддерживается в этом режиме браузера. " +
-      "На iPhone установи MIRA на экран Домой."
-    );
-  }
-
-  const permission = await Notification.requestPermission();
-
-  if (permission !== "granted") {
-    throw new Error("Разрешение на уведомления не предоставлено");
-  }
-
-  const registration = await registerMiraServiceWorker();
-
-  let subscription =
-    await registration.pushManager.getSubscription();
-
-  if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey:
-        urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    });
-  }
-
-  await savePushSubscription(subscription);
-
-  return true;
-}
-
-async function updatePushStatus() {
-  const status = $("#pushStatus");
-  const button = $("#enablePushBtn");
-
-  if (!status || !button) return;
-
-  if (!("Notification" in window)) {
-    status.textContent = "Уведомления не поддерживаются";
-    return;
-  }
-
-  if (Notification.permission === "denied") {
-    status.textContent =
-      "Уведомления заблокированы в настройках браузера";
-    return;
-  }
-
-  if (Notification.permission === "granted") {
-    try {
-      const registration = await registerMiraServiceWorker();
-
-      const subscription =
-        await registration.pushManager.getSubscription();
-
-      if (subscription && currentUser) {
-        await savePushSubscription(subscription);
-
-        status.textContent = "Уведомления MIRA включены";
-        button.textContent = "Обновить регистрацию";
-        return;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  status.textContent = "Уведомления пока не включены";
-}
-
-$("#enablePushBtn").addEventListener("click", async () => {
-  const button = $("#enablePushBtn");
-  const status = $("#pushStatus");
-
-  button.disabled = true;
-
-  try {
-    if (!currentUser) {
-      throw new Error("Сначала войди в MIRA");
-    }
-
-    if (!("Notification" in window)) {
-      throw new Error("Уведомления не поддерживаются");
-    }
-
-    if (!miraServiceWorker) {
-      throw new Error(
-        "Service Worker ещё загружается. Обнови MIRA и попробуй снова."
-      );
-    }
-
-    // Первый этап — получение разрешения
-    if (Notification.permission === "default") {
-      status.textContent = "Запрашиваем разрешение...";
-
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        throw new Error("Разрешение не предоставлено");
-      }
-
-      status.textContent =
-        "Разрешение получено! Нажми кнопку ещё раз для создания подписки.";
-
-      button.textContent = "Создать Push-подписку";
-      return;
-    }
-
-    if (Notification.permission !== "granted") {
-      throw new Error("Уведомления заблокированы");
-    }
-
-    // Второй этап — непосредственное создание подписки
-    button.textContent = "Создаём подписку...";
-    status.textContent = "Подключаем Push к Apple...";
-
-    const subscribePromise =
-      miraServiceWorker.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey:
-          urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      });
-
-    let subscription;
-
-    try {
-      subscription = await subscribePromise;
-    } catch (subscribeError) {
-      if (subscribeError.name === "InvalidStateError") {
-        subscription =
-          await miraServiceWorker.pushManager.getSubscription();
-      } else {
-        throw subscribeError;
-      }
-    }
-
-    if (!subscription) {
-      throw new Error("Push-подписка не создана");
-    }
-
-    // Сохраняем подписку в Supabase
-    button.textContent = "Сохраняем...";
-    status.textContent = "Сохраняем устройство в MIRA...";
-
-    await savePushSubscription(subscription);
-
-    status.textContent = "Уведомления MIRA подключены!";
-    button.textContent = "Уведомления включены";
-
-    toast("Push успешно подключён!");
-
-  } catch (error) {
-    console.error("MIRA PUSH ERROR:", error);
-
-    status.textContent =
-      "Ошибка: " + (error.message || error.name);
-
-    button.textContent = "Повторить подключение";
-
-    alert(
-      "Ошибка MIRA Push:\n\n" +
-      (error.message || error.name)
-    );
-
-  } finally {
-    button.disabled = false;
-  }
-});
-
-const authScreen=$("#authScreen");
-const app=$("#app");
-const authMessage=$("#authMessage");
-const registerPanel=$("#registerPanel");
-const loginPanel=$("#loginPanel");
-
-let busy=false;
-let currentUser=null;
-let activeConversationId=null;
-let messageChannel=null;
-let conversationChannel=null;
-let searchTimer=null;
-let openingConversation=false;
-
-function showMessage(text,type="success"){
- authMessage.textContent=text;
- authMessage.className="auth-message show "+type;
-}
-function switchToLogin(){
- registerPanel.classList.add("hidden");
- loginPanel.classList.remove("hidden");
- authMessage.className="auth-message";
-}
-function switchToRegister(){
- loginPanel.classList.add("hidden");
- registerPanel.classList.remove("hidden");
- authMessage.className="auth-message";
-}
-function setBusy(id,value,label){
- busy=value;
- const b=$("#"+id);
- b.disabled=value;
- b.textContent=value?"Подожди…":label;
-}
-
-$("#showLogin").addEventListener("click",switchToLogin);
-$("#showRegister").addEventListener("click",switchToRegister);
-
-async function loadProfile(user){
- const {data,error}=await supabase
-  .from("profiles")
-  .select("id,username,display_name")
-  .eq("id",user.id)
-  .maybeSingle();
-
- if(error)console.error("Ошибка загрузки профиля:",error);
- return data;
-}
-
-function showApp(user,profile){
- const name=profile?.display_name||user.user_metadata?.display_name||"Пользователь";
- const username=profile?.username||user.user_metadata?.username||"user";
-
- authScreen.classList.add("hidden");
- app.classList.remove("hidden");
-
- $("#headerUsername").textContent="@"+username;
- $("#profileName").textContent=name;
- $("#profileNick").textContent="@"+username;
- $("#profileAvatar").textContent=(name.trim()[0]||"M").toUpperCase();
- $("#profileEmail").textContent=user.email||"";
-
- startChats(user);
-}
-
-async function refreshSession(){
- const {data,error}=await supabase.auth.getSession();
- if(error)console.error(error);
-
- if(!data.session){
-  app.classList.add("hidden");
-  authScreen.classList.remove("hidden");
-  return;
- }
-
- const profile=await loadProfile(data.session.user);
- showApp(data.session.user,profile);
-}
-
-/* РЕГИСТРАЦИЯ */
-$("#registerForm").addEventListener("submit",async e=>{
- e.preventDefault();
- if(busy)return;
-
- const displayName=$("#regName").value.trim();
- const username=$("#regUsername").value.trim().toLowerCase();
- const email=$("#regEmail").value.trim();
- const password=$("#regPassword").value;
-
- if(!/^[a-z0-9_]{3,20}$/.test(username)){
-  showMessage("Никнейм: 3–20 символов, латинские буквы, цифры и _","error");
-  return;
- }
- if(!displayName||displayName.length>40){
-  showMessage("Имя должно содержать от 1 до 40 символов.","error");
-  return;
- }
- if(password.length<8){
-  showMessage("Пароль должен содержать минимум 8 символов.","error");
-  return;
- }
-
- setBusy("registerSubmit",true,"Создать аккаунт");
-
- try{
-  const {data,error}=await supabase.auth.signUp({
-   email,
-   password,
-   options:{
-    emailRedirectTo:window.location.origin+window.location.pathname,
-    data:{username,display_name:displayName}
-   }
-  });
-
-  if(error)throw error;
-
-  if(data.session){
-   const profile=await loadProfile(data.user);
-   showApp(data.user,profile);
-  }else{
-   switchToLogin();
-   $("#loginEmail").value=email;
-   showMessage("Аккаунт создан! Подтверди email по ссылке из письма, затем войди в MIRA.","success");
-  }
- }catch(error){
-  console.error(error);
-  let msg=error.message||"Не удалось создать аккаунт.";
-  if(/username|duplicate key|profiles_username_key/i.test(msg)){
-   msg="Этот никнейм уже занят. Выбери другой.";
-  }
-  showMessage(msg,"error");
- }finally{
-  setBusy("registerSubmit",false,"Создать аккаунт");
- }
-});
-
-/* ВХОД */
-$("#loginForm").addEventListener("submit",async e=>{
- e.preventDefault();
- if(busy)return;
-
- setBusy("loginSubmit",true,"Войти");
-
- try{
-  const email=$("#loginEmail").value.trim();
-  const password=$("#loginPassword").value;
-  const {data,error}=await supabase.auth.signInWithPassword({email,password});
-
-  if(error)throw error;
-
-  const profile=await loadProfile(data.user);
-  showApp(data.user,profile);
- }catch(error){
-  console.error(error);
-  showMessage(error.message||"Не удалось войти.","error");
- }finally{
-  setBusy("loginSubmit",false,"Войти");
- }
-});
-
-/* ВЫХОД */
-$("#logoutBtn").addEventListener("click",async()=>{
- stopChatChannels();
- currentUser=null;
-
- const {error}=await supabase.auth.signOut();
-
- if(error){
-  toast("Ошибка выхода: "+error.message);
-  return;
- }
-
- app.classList.add("hidden");
- authScreen.classList.remove("hidden");
- switchToLogin();
-});
-
-/* АВТОРИЗАЦИЯ */
-supabase.auth.onAuthStateChange((event,session)=>{
- if(event==="SIGNED_OUT"||!session){
-  stopChatChannels();
-  currentUser=null;
-  app.classList.add("hidden");
-  authScreen.classList.remove("hidden");
- }
-});
-
-/* MIRA 0.4 — ЛИЧНЫЕ ЧАТЫ */
-
-function stopChatChannels(){
- if(messageChannel){
-  supabase.removeChannel(messageChannel);
-  messageChannel=null;
- }
- if(conversationChannel){
-  supabase.removeChannel(conversationChannel);
-  conversationChannel=null;
- }
- activeConversationId=null;
-}
-
-async function startChats(user){
- stopChatChannels();
- currentUser=user;
- registerMiraServiceWorker()
-  .then(() => updatePushStatus())
-  .catch(error => {
-    console.error("MIRA Service Worker:", error);
-  });
-
- $("#chatList").innerHTML='<div class="empty-state">Загружаем диалоги...</div>';
- $("#searchResults").innerHTML="";
- $("#messages").innerHTML='<div class="empty-state">Найди пользователя и начни общение.</div>';
- $("#activeName").textContent="Выбери диалог";
- $("#activeUsername").textContent="Личные сообщения MIRA";
- $("#activeAvatar").textContent="M";
- $("#messageInput").disabled=true;
- $("#sendButton").disabled=true;
-
- await loadConversations();
-
- conversationChannel=supabase
-  .channel("mira-conversations-"+user.id)
-  .on("postgres_changes",{
-   event:"*",
-   schema:"public",
-   table:"conversations"
-  },()=>loadConversations())
-  .subscribe();
-}
-
-async function loadConversations(){
- if(!currentUser)return;
-
- const {data,error}=await supabase
-  .from("conversations")
-  .select("id,user_one,user_two,created_at")
-  .or(`user_one.eq.${currentUser.id},user_two.eq.${currentUser.id}`)
-  .order("created_at",{ascending:false});
-
- if(error){
-  console.error(error);
-  $("#chatList").innerHTML='<div class="empty-state">Не удалось загрузить диалоги.</div>';
-  return;
- }
-
- const conversations=[];
-
- for(const conversation of data||[]){
-  const otherId=conversation.user_one===currentUser.id
-   ?conversation.user_two
-   :conversation.user_one;
-
-  const {data:profile,error:profileError}=await supabase
-   .from("profiles")
-   .select("id,username,display_name")
-   .eq("id",otherId)
-   .maybeSingle();
-
-  if(profileError)console.error(profileError);
-
-  conversations.push({
-   id:conversation.id,
-   userId:otherId,
-   username:profile?.username||"user",
-   name:profile?.display_name||"Пользователь"
-  });
- }
-
- const list=$("#chatList");
- list.innerHTML="";
-
- if(!conversations.length){
-  list.innerHTML='<div class="empty-state">Пока нет диалогов. Найди пользователя выше!</div>';
-  return;
- }
-
- for(const chat of conversations){
-  const button=document.createElement("button");
-  button.type="button";
-  button.className="chat-item";
-  button.dataset.conversation=chat.id;
-
-  const avatar=document.createElement("div");
-  avatar.className="avatar";
-  avatar.textContent=(chat.name[0]||"M").toUpperCase();
-
-  const info=document.createElement("div");
-  const name=document.createElement("b");
-  name.textContent=chat.name;
-
-  const nick=document.createElement("div");
-  nick.className="muted small preview";
-  nick.textContent="@"+chat.username;
-
-  info.append(name,nick);
-  button.append(avatar,info);
-  button.addEventListener("click",()=>openConversation(chat));
-  list.append(button);
- }
-
- if(activeConversationId){
-  document.querySelectorAll("[data-conversation]").forEach(button=>{
-   button.classList.toggle("active",button.dataset.conversation===activeConversationId);
-  });
- }
-}
-
-/* ОТКРЫТИЕ ДИАЛОГА */
-async function openConversation(chat){
- if(!chat||!currentUser||openingConversation)return;
-
- openingConversation=true;
-
- try{
-  if(messageChannel){
-   await supabase.removeChannel(messageChannel);
-   messageChannel=null;
-  }
-
-  activeConversationId=chat.id;
-
-  $("#activeName").textContent=chat.name;
-  $("#activeUsername").textContent="@"+chat.username;
-  $("#activeAvatar").textContent=(chat.name[0]||"M").toUpperCase();
-  $("#messageInput").disabled=false;
-  $("#sendButton").disabled=false;
-
-  document.querySelectorAll("[data-conversation]").forEach(button=>{
-   button.classList.toggle("active",button.dataset.conversation===chat.id);
-  });
-
-  await loadMessages(chat.id);
-
-  if(activeConversationId!==chat.id)return;
-
-  messageChannel=supabase
-   .channel("mira-messages-"+chat.id+"-"+currentUser.id)
-   .on("postgres_changes",{
-    event:"INSERT",
-    schema:"public",
-    table:"messages",
-    filter:"conversation_id=eq."+chat.id
-   },payload=>{
-    if(activeConversationId===chat.id)addMessageToScreen(payload.new);
-   })
-   .subscribe();
- }finally{
-  openingConversation=false;
- }
-}
-
-function addMessageToScreen(message){
- if(!message||message.conversation_id!==activeConversationId)return;
-
- const container=$("#messages");
-
- if(container.querySelector(".empty-state")){
-  container.innerHTML="";
- }
-
- if(container.querySelector(`[data-message-id="${message.id}"]`))return;
-
- const bubble=document.createElement("div");
- bubble.className="bubble"+(message.sender_id===currentUser.id?" mine":"");
- bubble.dataset.messageId=message.id;
- bubble.textContent=message.body;
-
- container.append(bubble);
- container.scrollTop=container.scrollHeight;
-}
-
-async function loadMessages(conversationId){
- $("#messages").innerHTML='<div class="empty-state">Загружаем сообщения...</div>';
-
- const {data,error}=await supabase
-  .from("messages")
-  .select("id,conversation_id,sender_id,body,created_at")
-  .eq("conversation_id",conversationId)
-  .order("created_at",{ascending:true})
-  .limit(200);
-
- if(error){
-  console.error(error);
-  $("#messages").innerHTML='<div class="empty-state">Не удалось загрузить сообщения.</div>';
-  return;
- }
-
- if(activeConversationId!==conversationId)return;
-
- $("#messages").innerHTML="";
-
- if(!data?.length){
-  $("#messages").innerHTML='<div class="empty-state">Это начало вашей переписки. Напиши первое сообщение!</div>';
-  return;
- }
-
- data.forEach(addMessageToScreen);
- $("#messages").scrollTop=$("#messages").scrollHeight;
-}
-
-/* ПОИСК ПОЛЬЗОВАТЕЛЕЙ */
-$("#userSearch").addEventListener("input",()=>{
- clearTimeout(searchTimer);
-
- const query=$("#userSearch").value.trim().replace(/^@/,"").toLowerCase();
-
- if(query.length<2){
-  $("#searchResults").innerHTML="";
-  return;
- }
-
- searchTimer=setTimeout(()=>searchUsers(query),350);
-});
-
-async function searchUsers(query){
- if(!currentUser)return;
-
- const {data,error}=await supabase
-  .from("profiles")
-  .select("id,username,display_name")
-  .ilike("username",query+"%")
-  .neq("id",currentUser.id)
-  .limit(10);
-
- if(error){
-  console.error(error);
-  $("#searchResults").innerHTML='<div class="empty-state">Ошибка поиска пользователей.</div>';
-  return;
- }
-
- const results=$("#searchResults");
- results.innerHTML="";
-
- if(!data?.length){
-  results.innerHTML='<div class="empty-state">Пользователи не найдены.</div>';
-  return;
- }
-
- for(const profile of data){
-  const button=document.createElement("button");
-  button.type="button";
-  button.className="search-result";
-
-  const avatar=document.createElement("div");
-  avatar.className="avatar";
-  avatar.textContent=(profile.display_name?.[0]||"M").toUpperCase();
-
-  const info=document.createElement("div");
-  const name=document.createElement("b");
-  name.textContent=profile.display_name||"Пользователь";
-
-  const nick=document.createElement("div");
-  nick.className="muted small";
-  nick.textContent="@"+profile.username;
-
-  info.append(name,nick);
-  button.append(avatar,info);
-  button.addEventListener("click",()=>createConversation(profile));
-  results.append(button);
- }
-}
-
-/* СОЗДАНИЕ ЛИЧНОГО ДИАЛОГА */
-async function createConversation(profile){
- if(!currentUser||!profile||profile.id===currentUser.id)return;
-
- const first=currentUser.id<profile.id?currentUser.id:profile.id;
- const second=currentUser.id<profile.id?profile.id:currentUser.id;
-
- let {data:conversation,error}=await supabase
-  .from("conversations")
-  .select("id")
-  .eq("user_one",first)
-  .eq("user_two",second)
-  .maybeSingle();
-
- if(error){
-  console.error(error);
-  toast("Не удалось проверить диалог.");
-  return;
- }
-
- if(!conversation){
-  const result=await supabase
-   .from("conversations")
-   .insert({user_one:first,user_two:second})
-   .select("id")
-   .single();
-
-  conversation=result.data;
-  error=result.error;
-
-  if(error){
-   const retry=await supabase
-    .from("conversations")
-    .select("id")
-    .eq("user_one",first)
-    .eq("user_two",second)
-    .maybeSingle();
-
-   conversation=retry.data;
-   error=retry.error;
-  }
- }
-
- if(error||!conversation){
-  console.error(error);
-  toast("Не удалось создать диалог.");
-  return;
- }
-
- $("#userSearch").value="";
- $("#searchResults").innerHTML="";
-
- const chat={
-  id:conversation.id,
-  userId:profile.id,
-  username:profile.username||"user",
-  name:profile.display_name||"Пользователь"
- };
-
- await loadConversations();
- await openConversation(chat);
-}
-
-/* КНОПКА НОВОГО ЧАТА */
-$("#newChat").addEventListener("click",()=>{
- $("#userSearch").focus();
- toast("Введи никнейм пользователя в поиске.");
-});
+const VAPID_PUBLIC_KEY="BDg34bps15kHFH_bvtDCd06dRUV2EKTfghO01UhB2LDUcdpESnMQ8M0q1ej6n0ers90lhqV41HPBpaSmBoUDyr4";
+let miraServiceWorker=null,currentUser=null,activeConversationId=null,messageChannel=null,conversationChannel=null,searchTimer=null,openingConversation=false,busy=false;
+const authScreen=$("#authScreen"),app=$("#app"),authMessage=$("#authMessage"),registerPanel=$("#registerPanel"),loginPanel=$("#loginPanel");
+function showMessage(text,type="success"){authMessage.textContent=text;authMessage.className="auth-message show "+type}
+function switchToLogin(){registerPanel.classList.add("hidden");loginPanel.classList.remove("hidden");authMessage.className="auth-message"}
+function switchToRegister(){loginPanel.classList.add("hidden");registerPanel.classList.remove("hidden");authMessage.className="auth-message"}
+function setBusy(id,value,label){busy=value;const b=$("#"+id);b.disabled=value;b.textContent=value?"Подожди…":label}
+$("#showLogin").addEventListener("click",switchToLogin);$("#showRegister").addEventListener("click",switchToRegister);
+
+/* PUSH — существующая интеграция MIRA */
+function urlBase64ToUint8Array(base64String){const padding="=".repeat((4-base64String.length%4)%4);const base64=(base64String+padding).replace(/-/g,"+").replace(/_/g,"/");const rawData=atob(base64);return Uint8Array.from([...rawData].map(char=>char.charCodeAt(0)))}
+async function registerMiraServiceWorker(){if(!("serviceWorker" in navigator))throw new Error("Service Worker не поддерживается");miraServiceWorker=await navigator.serviceWorker.register("/mira/service-worker.js",{scope:"/mira/"});await navigator.serviceWorker.ready;return miraServiceWorker}
+async function savePushSubscription(subscription){if(!currentUser)throw new Error("Пользователь не авторизован");const s=subscription.toJSON(),p256dh=s.keys?.p256dh,auth=s.keys?.auth;if(!subscription.endpoint||!p256dh||!auth)throw new Error("Не удалось получить данные Push-подписки");const {error}=await supabase.from("push_subscriptions").upsert({user_id:currentUser.id,endpoint:subscription.endpoint,p256dh,auth},{onConflict:"endpoint"});if(error)throw error;return true}
+async function updatePushStatus(){const status=$("#pushStatus"),button=$("#enablePushBtn");if(!status||!button)return;if(!("Notification" in window)){status.textContent="Уведомления не поддерживаются";return}if(Notification.permission==="denied"){status.textContent="Уведомления заблокированы в настройках браузера";return}if(Notification.permission==="granted"){try{const registration=await registerMiraServiceWorker(),subscription=await registration.pushManager.getSubscription();if(subscription&&currentUser){await savePushSubscription(subscription);status.textContent="Уведомления MIRA включены";button.textContent="Обновить регистрацию";return}}catch(error){console.error(error)}}status.textContent="Уведомления пока не включены"}
+$("#enablePushBtn").addEventListener("click",async()=>{const button=$("#enablePushBtn"),status=$("#pushStatus");button.disabled=true;try{if(!currentUser)throw new Error("Сначала войди в MIRA");if(!("Notification" in window))throw new Error("Уведомления не поддерживаются");if(!miraServiceWorker)throw new Error("Service Worker ещё загружается. Обнови MIRA и попробуй снова.");if(Notification.permission==="default"){status.textContent="Запрашиваем разрешение...";const permission=await Notification.requestPermission();if(permission!=="granted")throw new Error("Разрешение не предоставлено");status.textContent="Разрешение получено! Нажми кнопку ещё раз для создания подписки.";button.textContent="Создать Push-подписку";return}if(Notification.permission!=="granted")throw new Error("Уведомления заблокированы");button.textContent="Создаём подписку...";status.textContent="Подключаем Push...";let subscription;try{subscription=await miraServiceWorker.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)})}catch(err){if(err.name==="InvalidStateError")subscription=await miraServiceWorker.pushManager.getSubscription();else throw err}if(!subscription)throw new Error("Push-подписка не создана");button.textContent="Сохраняем...";status.textContent="Сохраняем устройство в MIRA...";await savePushSubscription(subscription);status.textContent="Уведомления MIRA подключены!";button.textContent="Уведомления включены";toast("Push успешно подключён!")}catch(error){console.error("MIRA PUSH ERROR:",error);status.textContent="Ошибка: "+(error.message||error.name);button.textContent="Повторить подключение";alert("Ошибка MIRA Push:\n\n"+(error.message||error.name))}finally{button.disabled=false}});
+
+/* ПРОФИЛЬ */
+async function loadProfile(user){const {data,error}=await supabase.from("profiles").select("id,username,display_name,avatar_url,bio").eq("id",user.id).maybeSingle();if(error)console.error("Ошибка загрузки профиля:",error);return data}
+function initials(name){return (name?.trim()?.[0]||"M").toUpperCase()}
+function setAvatar(el,name,url){el.replaceChildren();if(url){const img=document.createElement("img");img.src=url;img.alt="Аватар";img.onerror=()=>{el.textContent=initials(name)};el.append(img)}else el.textContent=initials(name)}
+let activeProfile=null;
+function showProfile(profile,user){activeProfile=profile||{};const name=profile?.display_name||user.user_metadata?.display_name||"Пользователь",username=profile?.username||user.user_metadata?.username||"user";$("#headerUsername").textContent="@"+username;$("#profileName").textContent=name;$("#profileNick").textContent="@"+username;$("#profileBio").textContent=profile?.bio||"";$("#profileEmail").textContent=user.email||"";setAvatar($("#profileAvatar"),name,profile?.avatar_url);$("#editDisplayName").value=name;$("#editUsername").value=username;$("#editBio").value=profile?.bio||""}
+function showApp(user,profile){currentUser=user;authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user)}
+async function refreshSession(){const {data,error}=await supabase.auth.getSession();if(error)console.error(error);if(!data.session){app.classList.add("hidden");authScreen.classList.remove("hidden");return}const profile=await loadProfile(data.session.user);showApp(data.session.user,profile)}
+$("#profileForm").addEventListener("submit",async e=>{e.preventDefault();if(!currentUser)return;const button=$("#saveProfileBtn"),display_name=$("#editDisplayName").value.trim(),username=$("#editUsername").value.trim().toLowerCase(),bio=$("#editBio").value.trim(),file=$("#avatarFile").files[0];if(!display_name||display_name.length>40){toast("Имя должно содержать от 1 до 40 символов.");return}if(!/^[a-z0-9_]{3,20}$/.test(username)){toast("Никнейм должен содержать 3–20 латинских букв, цифр или _.");return}if(bio.length>160){toast("Описание слишком длинное.");return}if(file&&(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024)){toast("Выбери JPG, PNG или WebP до 5 МБ.");return}button.disabled=true;button.textContent="Сохраняем...";try{const {data:duplicate,error:checkError}=await supabase.from("profiles").select("id").ilike("username",username).neq("id",currentUser.id).limit(1);if(checkError)throw checkError;if(duplicate?.length){toast("Этот никнейм уже занят.");return}let avatar_url=activeProfile?.avatar_url||null;if(file){const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error:uploadError}=await supabase.storage.from("mira-avatars").upload(path,file,{contentType:file.type,upsert:false});if(uploadError)throw uploadError;avatar_url=supabase.storage.from("mira-avatars").getPublicUrl(path).data.publicUrl}const {error}=await supabase.from("profiles").update({display_name,username,bio,avatar_url}).eq("id",currentUser.id);if(error){if(error.code==="23505")throw new Error("Этот никнейм уже занят.");throw error}const profile=await loadProfile(currentUser);showProfile(profile,currentUser);$("#avatarFile").value="";await loadConversations();toast("Профиль MIRA обновлён!")}catch(error){console.error(error);toast("Не удалось сохранить профиль: "+(error.message||"ошибка"))}finally{button.disabled=false;button.textContent="Сохранить профиль"}});
+
+/* РЕГИСТРАЦИЯ И ВХОД */
+$("#registerForm").addEventListener("submit",async e=>{e.preventDefault();if(busy)return;const displayName=$("#regName").value.trim(),username=$("#regUsername").value.trim().toLowerCase(),email=$("#regEmail").value.trim(),password=$("#regPassword").value;if(!/^[a-z0-9_]{3,20}$/.test(username)){showMessage("Никнейм: 3–20 символов, латинские буквы, цифры и _","error");return}if(!displayName||displayName.length>40){showMessage("Имя должно содержать от 1 до 40 символов.","error");return}if(password.length<8){showMessage("Пароль должен содержать минимум 8 символов.","error");return}setBusy("registerSubmit",true,"Создать аккаунт");try{const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname,data:{username,display_name:displayName}}});if(error)throw error;if(data.session){const profile=await loadProfile(data.user);showApp(data.user,profile)}else{switchToLogin();$("#loginEmail").value=email;showMessage("Аккаунт создан! Подтверди email по ссылке из письма, затем войди в MIRA.","success")}}catch(error){console.error(error);let msg=error.message||"Не удалось создать аккаунт.";if(/username|duplicate key|profiles_username_key/i.test(msg))msg="Этот никнейм уже занят. Выбери другой.";showMessage(msg,"error")}finally{setBusy("registerSubmit",false,"Создать аккаунт")}});
+$("#loginForm").addEventListener("submit",async e=>{e.preventDefault();if(busy)return;setBusy("loginSubmit",true,"Войти");try{const email=$("#loginEmail").value.trim(),password=$("#loginPassword").value;const {data,error}=await supabase.auth.signInWithPassword({email,password});if(error)throw error;const profile=await loadProfile(data.user);showApp(data.user,profile)}catch(error){console.error(error);showMessage(error.message||"Не удалось войти.","error")}finally{setBusy("loginSubmit",false,"Войти")}});
+$("#logoutBtn").addEventListener("click",async()=>{stopChatChannels();const {error}=await supabase.auth.signOut();if(error){toast("Ошибка выхода: "+error.message);return}currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden");switchToLogin()});
+supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session){stopChatChannels();currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden")}});
+function stopChatChannels(){if(messageChannel){supabase.removeChannel(messageChannel);messageChannel=null}if(conversationChannel){supabase.removeChannel(conversationChannel);conversationChannel=null}activeConversationId=null}
+
+/* ДИАЛОГИ */
+async function startChats(user){stopChatChannels();currentUser=user;registerMiraServiceWorker().then(updatePushStatus).catch(error=>console.error("MIRA Service Worker:",error));$("#chatList").innerHTML='<div class="empty-state">Загружаем диалоги...</div>';$("#searchResults").innerHTML="";$("#messages").innerHTML='<div class="empty-state">Найди пользователя и начни общение.</div>';$("#activeName").textContent="Выбери диалог";$("#activeUsername").textContent="Личные сообщения MIRA";setAvatar($("#activeAvatar"),"M",null);$("#messageInput").disabled=true;$("#sendButton").disabled=true;await loadConversations();conversationChannel=supabase.channel("mira-conversations-"+user.id).on("postgres_changes",{event:"*",schema:"public",table:"conversations"},()=>loadConversations()).subscribe()}
+async function loadConversations(){if(!currentUser)return;const {data,error}=await supabase.from("conversations").select("id,user_one,user_two,created_at").or(`user_one.eq.${currentUser.id},user_two.eq.${currentUser.id}`).order("created_at",{ascending:false});if(error){console.error(error);$("#chatList").innerHTML='<div class="empty-state">Не удалось загрузить диалоги.</div>';return}const chats=[];for(const c of data||[]){const otherId=c.user_one===currentUser.id?c.user_two:c.user_one;const {data:p,error:pe}=await supabase.from("profiles").select("id,username,display_name,avatar_url").eq("id",otherId).maybeSingle();if(pe)console.error(pe);chats.push({id:c.id,userId:otherId,username:p?.username||"user",name:p?.display_name||"Пользователь",avatar_url:p?.avatar_url||null})}const list=$("#chatList");list.innerHTML="";if(!chats.length){list.innerHTML='<div class="empty-state">Пока нет диалогов. Найди пользователя выше!</div>';return}for(const chat of chats){const button=document.createElement("button");button.type="button";button.className="chat-item";button.dataset.conversation=chat.id;const avatar=document.createElement("div");avatar.className="avatar";setAvatar(avatar,chat.name,chat.avatar_url);const info=document.createElement("div"),name=document.createElement("b"),nick=document.createElement("div");name.textContent=chat.name;nick.className="muted small preview";nick.textContent="@"+chat.username;info.append(name,nick);button.append(avatar,info);button.addEventListener("click",()=>openConversation(chat));list.append(button)}if(activeConversationId)document.querySelectorAll("[data-conversation]").forEach(b=>b.classList.toggle("active",b.dataset.conversation===activeConversationId))}
+async function openConversation(chat){if(!chat||!currentUser||openingConversation)return;openingConversation=true;try{if(messageChannel){await supabase.removeChannel(messageChannel);messageChannel=null}activeConversationId=chat.id;$("#activeName").textContent=chat.name;$("#activeUsername").textContent="@"+chat.username;setAvatar($("#activeAvatar"),chat.name,chat.avatar_url);$("#messageInput").disabled=false;$("#sendButton").disabled=false;document.querySelectorAll("[data-conversation]").forEach(b=>b.classList.toggle("active",b.dataset.conversation===chat.id));await loadMessages(chat.id);if(activeConversationId!==chat.id)return;messageChannel=supabase.channel("mira-messages-"+chat.id+"-"+currentUser.id).on("postgres_changes",{event:"*",schema:"public",table:"messages",filter:"conversation_id=eq."+chat.id},payload=>{if(activeConversationId!==chat.id)return;if(payload.eventType==="INSERT")addMessageToScreen(payload.new);else loadMessages(chat.id)}).subscribe()}finally{openingConversation=false}}
+function addMessageToScreen(message){if(!message||message.conversation_id!==activeConversationId)return;if(Array.isArray(message.deleted_for)&&currentUser&&message.deleted_for.includes(currentUser.id))return;const container=$("#messages");if(container.querySelector(".empty-state"))container.innerHTML="";if(container.querySelector(`[data-message-id="${message.id}"]`))return;const mine=message.sender_id===currentUser.id,bubble=document.createElement("div");bubble.className="bubble"+(mine?" mine":"");bubble.dataset.messageId=message.id;if(message.deleted_for_everyone){bubble.classList.add("deleted");bubble.textContent="Сообщение удалено";container.append(bubble);return}const body=document.createElement("div");body.textContent=message.body||"";bubble.append(body);const meta=document.createElement("div");meta.className="message-meta";const date=message.created_at?new Date(message.created_at):null;meta.textContent=(date&&!Number.isNaN(date.getTime())?date.toLocaleString("ru-RU",{hour:"2-digit",minute:"2-digit"}):"")+(message.edited_at?" · изменено":"");bubble.append(meta);const actions=document.createElement("div");actions.className="message-actions";if(mine){const edit=document.createElement("button");edit.type="button";edit.textContent="Изменить";edit.addEventListener("click",()=>editMessage(message));actions.append(edit);const all=document.createElement("button");all.type="button";all.textContent="Удалить у всех";all.addEventListener("click",()=>deleteMessageEverywhere(message.id));actions.append(all)}const self=document.createElement("button");self.type="button";self.textContent="Удалить у себя";self.addEventListener("click",()=>deleteMessageForMe(message.id));actions.append(self);bubble.append(actions);container.append(bubble);container.scrollTop=container.scrollHeight}
+async function loadMessages(conversationId){$("#messages").innerHTML='<div class="empty-state">Загружаем сообщения...</div>';const {data,error}=await supabase.from("messages").select("id,conversation_id,sender_id,body,created_at,edited_at,deleted_for,deleted_for_everyone").eq("conversation_id",conversationId).order("created_at",{ascending:true}).limit(200);if(error){console.error(error);$("#messages").innerHTML='<div class="empty-state">Не удалось загрузить сообщения.</div>';return}if(activeConversationId!==conversationId)return;$("#messages").innerHTML="";const visible=(data||[]).filter(m=>!(Array.isArray(m.deleted_for)&&m.deleted_for.includes(currentUser.id)));if(!visible.length){$("#messages").innerHTML='<div class="empty-state">Это начало вашей переписки. Напиши первое сообщение!</div>';return}visible.forEach(addMessageToScreen);$("#messages").scrollTop=$("#messages").scrollHeight}
+async function editMessage(message){const next=prompt("Измени текст сообщения:",message.body);if(next===null)return;const body=next.trim();if(!body||body.length>4000){toast("Сообщение должно содержать от 1 до 4000 символов.");return}const {data,error}=await supabase.rpc("mira_edit_message",{p_message_id:message.id,p_new_body:body});if(error){console.error(error);toast("Не удалось изменить сообщение: "+error.message);return}if(data===false){toast("Сообщение нельзя изменить.");return}await loadMessages(activeConversationId);toast("Сообщение изменено")}
+async function deleteMessageForMe(id){if(!confirm("Удалить это сообщение только у себя?"))return;const {data,error}=await supabase.rpc("mira_delete_message_for_me",{p_message_id:id});if(error){console.error(error);toast("Не удалось удалить сообщение: "+error.message);return}if(data===false){toast("Не удалось удалить это сообщение.");return}await loadMessages(activeConversationId);toast("Сообщение удалено у тебя")}
+async function deleteMessageEverywhere(id){if(!confirm("Удалить сообщение у обоих участников? Это действие нельзя отменить."))return;const {data,error}=await supabase.rpc("mira_delete_message_for_everyone",{p_message_id:id});if(error){console.error(error);toast("Не удалось удалить сообщение: "+error.message);return}if(data===false){toast("Удалить у всех может только автор сообщения.");return}await loadMessages(activeConversationId);toast("Сообщение удалено у всех")}
+
+/* ПОИСК И СОЗДАНИЕ ЧАТА */
+$("#userSearch").addEventListener("input",()=>{clearTimeout(searchTimer);const query=$("#userSearch").value.trim().replace(/^@/,"").toLowerCase();if(query.length<2){$("#searchResults").innerHTML="";return}searchTimer=setTimeout(()=>searchUsers(query),350)});
+async function searchUsers(query){if(!currentUser)return;const {data,error}=await supabase.from("profiles").select("id,username,display_name,avatar_url").ilike("username",query+"%").neq("id",currentUser.id).limit(10);if(error){console.error(error);$("#searchResults").innerHTML='<div class="empty-state">Ошибка поиска пользователей.</div>';return}const results=$("#searchResults");results.innerHTML="";if(!data?.length){results.innerHTML='<div class="empty-state">Пользователи не найдены.</div>';return}for(const p of data){const button=document.createElement("button");button.type="button";button.className="search-result";const avatar=document.createElement("div");avatar.className="avatar";setAvatar(avatar,p.display_name,p.avatar_url);const info=document.createElement("div"),name=document.createElement("b"),nick=document.createElement("div");name.textContent=p.display_name||"Пользователь";nick.className="muted small";nick.textContent="@"+p.username;info.append(name,nick);button.append(avatar,info);button.addEventListener("click",()=>createConversation(p));results.append(button)}}
+async function createConversation(profile){if(!currentUser||!profile||profile.id===currentUser.id)return;const first=currentUser.id<profile.id?currentUser.id:profile.id,second=currentUser.id<profile.id?profile.id:currentUser.id;let {data:conversation,error}=await supabase.from("conversations").select("id").eq("user_one",first).eq("user_two",second).maybeSingle();if(error){console.error(error);toast("Не удалось проверить диалог.");return}if(!conversation){const result=await supabase.from("conversations").insert({user_one:first,user_two:second}).select("id").single();conversation=result.data;error=result.error;if(error){const retry=await supabase.from("conversations").select("id").eq("user_one",first).eq("user_two",second).maybeSingle();conversation=retry.data;error=retry.error}}if(error||!conversation){console.error(error);toast("Не удалось создать диалог.");return}$("#userSearch").value="";$("#searchResults").innerHTML="";const chat={id:conversation.id,userId:profile.id,username:profile.username||"user",name:profile.display_name||"Пользователь",avatar_url:profile.avatar_url||null};await loadConversations();await openConversation(chat)}
+$("#newChat").addEventListener("click",()=>{$("#userSearch").focus();toast("Введи никнейм пользователя в поиске.")});
 
 /* ОТПРАВКА СООБЩЕНИЙ */
-$("#sendForm").addEventListener("submit",async event=>{
- event.preventDefault();
-
- const input=$("#messageInput");
- const body=input.value.trim();
- const conversationId=activeConversationId;
-
- if(!body||!currentUser||!conversationId)return;
-
- $("#sendButton").disabled=true;
-
- const {error}=await supabase
-  .from("messages")
-  .insert({
-   conversation_id:conversationId,
-   sender_id:currentUser.id,
-   body:body.slice(0,4000)
-  });
-
- $("#sendButton").disabled=!activeConversationId;
-
- if(error){
-  console.error(error);
-  toast("Не удалось отправить сообщение.");
-  return;
- }
-
- input.value="";
- input.focus();
-});
-
+$("#sendForm").addEventListener("submit",async event=>{event.preventDefault();const input=$("#messageInput"),body=input.value.trim(),conversationId=activeConversationId;if(!body||!currentUser||!conversationId)return;$("#sendButton").disabled=true;const {error}=await supabase.from("messages").insert({conversation_id:conversationId,sender_id:currentUser.id,body:body.slice(0,4000)});$("#sendButton").disabled=!activeConversationId;if(error){console.error(error);toast("Не удалось отправить сообщение: "+error.message);return}input.value="";input.focus()});
 await refreshSession();
 </script>
 </body>
