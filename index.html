@@ -312,6 +312,9 @@ function giftConfettiBurst(host){if(window.matchMedia?.("(prefers-reduced-motion
 async function renderChatGiftEvent(instance,animate=true,conversationId=activeConversationId){
  if(!instance||!currentUser||!activeChatProfile||!conversationId||activeConversationId!==conversationId)return;
  const senderId=instance.sender_id,ownerId=instance.owner_id,partnerId=activeChatProfile.id;
+ // Старые подарки остаются в коллекции, но не повторяются в истории чата.
+ const giftTimestamp=instance.created_at?new Date(instance.created_at).getTime():0;
+ if(!giftTimestamp||Date.now()-giftTimestamp>60_000||giftTimestamp>Date.now()+30_000)return;
  if(!((senderId===currentUser.id&&ownerId===partnerId)||(ownerId===currentUser.id&&senderId===partnerId)))return;
  const host=$("#messages");if(!host)return;
  if(host.querySelector('[data-gift-instance="'+instance.id+'"]'))return;
@@ -331,9 +334,11 @@ async function renderChatGiftEvent(instance,animate=true,conversationId=activeCo
 async function loadChatGiftEvents(conversationId,partnerId){
  if(!currentUser||!partnerId)return;
  const uid=currentUser.id;
+ // При открытии чата подхватываем только события за последнюю минуту.
+ const recentSince=new Date(Date.now()-60_000).toISOString();
  const [sent,received]=await Promise.all([
-  supabase.from("gift_instances").select("id,gift_id,sender_id,owner_id,serial_number,created_at").eq("sender_id",uid).eq("owner_id",partnerId).order("created_at",{ascending:true}),
-  supabase.from("gift_instances").select("id,gift_id,sender_id,owner_id,serial_number,created_at").eq("sender_id",partnerId).eq("owner_id",uid).order("created_at",{ascending:true})
+  supabase.from("gift_instances").select("id,gift_id,sender_id,owner_id,serial_number,created_at").eq("sender_id",uid).eq("owner_id",partnerId).gte("created_at",recentSince).order("created_at",{ascending:true}),
+  supabase.from("gift_instances").select("id,gift_id,sender_id,owner_id,serial_number,created_at").eq("sender_id",partnerId).eq("owner_id",uid).gte("created_at",recentSince).order("created_at",{ascending:true})
  ]);
  if(sent.error||received.error){console.warn("MIRA chat gifts:",sent.error||received.error);return}
  if(activeConversationId!==conversationId||activeChatProfile?.id!==partnerId)return;
