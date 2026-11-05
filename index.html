@@ -70,10 +70,47 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
 .gift-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.gift-confetti i{position:absolute;top:38%;left:50%;width:5px;height:8px;border-radius:2px;background:var(--confetti);animation:giftConfetti .85s ease-out forwards;transform:translate(-50%,-50%) rotate(0)}
 @keyframes chatGiftIn{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes chatGiftFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}@keyframes giftConfetti{to{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
 @media(prefers-reduced-motion:reduce){.chat-gift-event,.chat-gift-art,.gift-confetti i{animation:none!important}}
+
+/* MIRA motion system */
+:root{--motion-fast:160ms;--motion-base:240ms;--motion-slow:420ms;--ease-out:cubic-bezier(.2,.75,.25,1)}
+button,.box,.auth-card,.profile-card,.chat-item,.search-result,.nav,.gift-card,.bubble,.notice,.avatar,.field{transition:transform var(--motion-base) var(--ease-out),background-color var(--motion-base) ease,border-color var(--motion-base) ease,box-shadow var(--motion-base) ease,opacity var(--motion-base) ease}
+button:not(:disabled):active{transform:scale(.97)}
+.btn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 24px #6557cf35}
+.nav:hover,.chat-item:hover,.search-result:hover{transform:translateX(3px)}
+.chat-item.active{box-shadow:inset 3px 0 var(--accent)}
+.avatar{transition:transform var(--motion-base) var(--ease-out),box-shadow var(--motion-base) ease}
+.clickable-profile:hover{transform:scale(1.045);box-shadow:0 0 0 3px #8c7cf655}
+.field:focus{box-shadow:0 0 0 3px #8c7cf626}
+.box,.profile-card,.notice{animation:miraRise .48s var(--ease-out) both}
+.heading{animation:miraFade .38s ease both}
+.chat-item{animation:miraSlide .32s var(--ease-out) both}
+.chat-item:nth-child(2){animation-delay:25ms}.chat-item:nth-child(3){animation-delay:50ms}.chat-item:nth-child(4){animation-delay:75ms}.chat-item:nth-child(5){animation-delay:100ms}
+.search-result{animation:miraSlide .25s var(--ease-out) both}
+.bubble{animation:messageEnter .24s var(--ease-out) both;transform-origin:bottom left}
+.bubble.mine{transform-origin:bottom right}
+.gift-card{animation:miraRise .38s var(--ease-out) both}
+.gift-card:hover{transform:translateY(-5px) scale(1.015);box-shadow:0 12px 28px #0004}
+.logo{animation:logoBreathe 4s ease-in-out infinite}
+.auth-card{animation:authEnter .55s var(--ease-out) both}
+.chat-top .avatar{animation:avatarPop .38s var(--ease-out) both}
+.messages{scroll-behavior:smooth}
+@keyframes miraRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes miraSlide{from{opacity:0;transform:translateX(-9px)}to{opacity:1;transform:translateX(0)}}
+@keyframes miraFade{from{opacity:0}to{opacity:1}}
+@keyframes messageEnter{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes authEnter{from{opacity:0;transform:translateY(15px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes avatarPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes logoBreathe{0%,100%{box-shadow:0 0 0 0 #8c7cf600}50%{box-shadow:0 0 0 7px #8c7cf61a}}
+body.booting{overflow:hidden}
+body.booting::before{content:"M";position:fixed;z-index:9999;left:50%;top:50%;width:54px;height:54px;display:grid;place-items:center;transform:translate(-50%,-50%);border-radius:17px;background:linear-gradient(135deg,#b5a9ff,#6557cf);color:white;font-size:27px;font-weight:900;box-shadow:0 0 0 0 #8c7cf655;animation:bootPulse 1.15s ease-in-out infinite}
+body.booting::after{content:"";position:fixed;z-index:9998;left:calc(50% - 38px);top:calc(50% + 43px);width:76px;height:3px;border-radius:9px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:bootLine 1.15s ease-in-out infinite}
+@keyframes bootPulse{50%{box-shadow:0 0 0 12px #8c7cf61c;transform:translate(-50%,-50%) scale(1.04)}}
+@keyframes bootLine{0%{opacity:.35;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}100%{opacity:.35;transform:scaleX(.4)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body>
-<section class="auth-screen" id="authScreen">
+<body class="booting">
+<section class="auth-screen hidden" id="authScreen">
  <div class="auth-card">
   <div class="auth-brand"><div class="logo">M</div><div><div class="brand-name">MIRA</div><div class="tagline">Новое время — большие амбиции.</div></div></div>
   <div id="registerPanel">
@@ -354,8 +391,23 @@ $("#founderAliasForm").addEventListener("submit",async e=>{
  const {data,error}=await supabase.rpc("mira_add_alias_for_username",{p_username:username,p_alias:alias});
  $("#eliteFounderStatus").textContent=error?"Ошибка: "+error.message:(data?"Дополнительное имя выдано.":"Не удалось выдать имя.")
 });
-function showApp(user,profile){currentUser=user;authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess();loadMyGifts()}
-async function refreshSession(){const {data,error}=await supabase.auth.getSession();if(error)console.error(error);if(!data.session){app.classList.add("hidden");authScreen.classList.remove("hidden");return}const profile=await loadProfile(data.session.user);showApp(data.session.user,profile)}
+function showApp(user,profile){currentUser=user;document.body.classList.remove("booting");authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess();loadMyGifts()}
+async function refreshSession(){
+ try{
+  const {data,error}=await supabase.auth.getSession();
+  if(error)throw error;
+  if(data?.session?.user){
+   const profile=await loadProfile(data.session.user);
+   showApp(data.session.user,profile);
+   return;
+  }
+  currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden");document.body.classList.remove("booting");
+ }catch(error){
+  console.error("MIRA session restore:",error);
+  currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden");document.body.classList.remove("booting");
+  switchToLogin();showMessage("Не удалось восстановить сессию. Войди ещё раз.", "error");
+ }
+}
 /* ONLINE-СТАТУС И ПРИВАТНОСТЬ */
 async function savePresence(isOnline){if(!currentUser)return;const {error}=await supabase.rpc("mira_set_presence",{p_is_online:!!isOnline});if(!error)return;console.warn("MIRA presence RPC unavailable; using legacy fallback:",error.message);const now=new Date().toISOString(),payload={user_id:currentUser.id,is_online:!!isOnline,last_seen:now,show_online:currentPresenceSettings.show_online,show_last_seen:currentPresenceSettings.show_last_seen,updated_at:now};const fallback=await supabase.from("user_presence").upsert(payload,{onConflict:"user_id"});if(fallback.error)console.error("MIRA presence:",fallback.error)}
 async function startPresence(){if(!currentUser)return;await loadPresenceSettings();await savePresence(document.visibilityState==="visible");if(presenceTimer)clearInterval(presenceTimer);presenceTimer=setInterval(()=>{if(document.visibilityState==="visible")savePresence(true)},25000);}
@@ -396,7 +448,7 @@ $("#profileForm").addEventListener("submit",async e=>{e.preventDefault();if(!cur
 $("#registerForm").addEventListener("submit",async e=>{e.preventDefault();if(busy)return;const displayName=$("#regName").value.trim(),username=$("#regUsername").value.trim().toLowerCase(),email=$("#regEmail").value.trim(),password=$("#regPassword").value;if(!/^[a-z0-9_]{3,20}$/.test(username)){showMessage("Никнейм: 3–20 символов, латинские буквы, цифры и _","error");return}if(!displayName||displayName.length>40){showMessage("Имя должно содержать от 1 до 40 символов.","error");return}if(password.length<8){showMessage("Пароль должен содержать минимум 8 символов.","error");return}setBusy("registerSubmit",true,"Создать аккаунт");try{const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname,data:{username,display_name:displayName}}});if(error)throw error;if(data.session){const profile=await loadProfile(data.user);showApp(data.user,profile)}else{switchToLogin();$("#loginEmail").value=email;showMessage("Аккаунт создан! Подтверди email по ссылке из письма, затем войди в MIRA.","success")}}catch(error){console.error(error);let msg=error.message||"Не удалось создать аккаунт.";if(/username|duplicate key|profiles_username_key/i.test(msg))msg="Этот никнейм уже занят. Выбери другой.";showMessage(msg,"error")}finally{setBusy("registerSubmit",false,"Создать аккаунт")}});
 $("#loginForm").addEventListener("submit",async e=>{e.preventDefault();if(busy)return;setBusy("loginSubmit",true,"Войти");try{const email=$("#loginEmail").value.trim(),password=$("#loginPassword").value;const {data,error}=await supabase.auth.signInWithPassword({email,password});if(error)throw error;const profile=await loadProfile(data.user);showApp(data.user,profile)}catch(error){console.error(error);showMessage(error.message||"Не удалось войти.","error")}finally{setBusy("loginSubmit",false,"Войти")}});
 $("#logoutBtn").addEventListener("click",async()=>{await stopPresence();stopChatChannels();const {error}=await supabase.auth.signOut();if(error){toast("Ошибка выхода: "+error.message);return}currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden");switchToLogin()});
-supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session){stopPresence();stopChatChannels();currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden")}});
+supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){stopPresence();stopChatChannels();currentUser=null;app.classList.add("hidden");authScreen.classList.remove("hidden");document.body.classList.remove("booting");switchToLogin()}else if((event==="SIGNED_IN"||event==="TOKEN_REFRESHED")&&session?.user&&!currentUser){loadProfile(session.user).then(profile=>showApp(session.user,profile)).catch(error=>console.error("MIRA auth event:",error))}});
 function stopTyping(){if(typingStopTimer){clearTimeout(typingStopTimer);typingStopTimer=null}if(typingHideTimer){clearTimeout(typingHideTimer);typingHideTimer=null}if(typingChannel){supabase.removeChannel(typingChannel);typingChannel=null}remoteTypingUser=null;const indicator=$("#typingIndicator");if(indicator)indicator.textContent=""}
 function stopChatChannels(){stopTyping();if(messageChannel){supabase.removeChannel(messageChannel);messageChannel=null}if(conversationChannel){supabase.removeChannel(conversationChannel);conversationChannel=null}if(conversationsRefreshTimer){clearInterval(conversationsRefreshTimer);conversationsRefreshTimer=null}activeConversationId=null;activeChatProfile=null;replyToMessage=null;$("#replyComposer")?.classList.add("hidden")}
 
