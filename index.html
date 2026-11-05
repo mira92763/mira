@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MIRA">
-<title>MIRA 0.6 — Новое время, большие амбиции</title>
+<title>MIRA 0.7 — Новое время, большие амбиции</title>
 <style>
 :root{--bg:#10111a;--panel:#191b29;--panel2:#222538;--line:#30344a;--text:#f4f3ff;--muted:#999db4;--accent:#8c7cf6;--accent2:#6557cf}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#302957 0,transparent 40%),var(--bg);color:var(--text);font:15px Inter,system-ui,sans-serif;min-height:100vh}
@@ -116,6 +116,17 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
     <div class="notice">Версия 0.7 · Регистрация, профили и личные сообщения через Supabase.</div>
    </section>
   </main>
+ </div>
+</div>
+<div class="profile-modal hidden" id="publicProfileModal" role="dialog" aria-modal="true" aria-labelledby="publicProfileName">
+ <div class="profile-modal-card">
+  <button class="modal-close" id="closePublicProfile" type="button" aria-label="Закрыть">×</button>
+  <div class="avatar profile-avatar" id="publicProfileAvatar">M</div>
+  <h2 id="publicProfileName">Пользователь</h2>
+  <div class="muted" id="publicProfileNick">@username</div>
+  <p class="muted small" id="publicProfileBio"></p>
+  <div class="presence-label" id="publicProfilePresence">Статус пока неизвестен</div>
+  <button class="btn" id="profileMessageBtn" type="button">Написать сообщение</button>
  </div>
 </div>
 <div class="toast" id="toast"></div>
