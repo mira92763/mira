@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MIRA">
-<title>MIRA 0.7.1 — Новое время, большие амбиции</title>
+<title>MIRA 0.8 — Новое время, большие амбиции</title>
 <style>
 :root{--bg:#10111a;--panel:#191b29;--panel2:#222538;--line:#30344a;--text:#f4f3ff;--muted:#999db4;--accent:#8c7cf6;--accent2:#6557cf}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#302957 0,transparent 40%),var(--bg);color:var(--text);font:15px Inter,system-ui,sans-serif;min-height:100vh}
@@ -47,6 +47,16 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
 .search-result>div:last-child,.chat-item>div:last-child{min-width:0;overflow-wrap:anywhere}.empty-state{color:var(--muted);font-size:12px;text-align:center;padding:18px 8px;line-height:1.5}#userSearch{margin-bottom:5px}
 .profile-form{max-width:560px;margin:18px auto 0;text-align:left}.profile-form textarea{min-height:90px;resize:vertical}.profile-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
  .privacy-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer}.privacy-row span{display:flex;flex-direction:column;gap:4px}.privacy-row small{font-size:12px;color:var(--muted);line-height:1.4}.privacy-row input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+
+ .alias-list{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:12px 0}
+ .alias-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);font-size:12px}
+ .alias-chip strong{color:var(--accent)}
+ .elite-panel{margin-top:16px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+ .elite-panel h3{font-size:15px;margin:0 0 8px}
+ .elite-form{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-top:10px}
+ .elite-form .field{min-width:0}
+ .alias-remove{background:transparent;color:#ff9eae;padding:4px 7px}
+ @media(max-width:600px){.elite-form{grid-template-columns:1fr}.elite-form .btn{width:100%}}
  .profile-modal{position:fixed;inset:0;z-index:30;background:#050610b8;display:grid;place-items:center;padding:18px}.profile-modal.hidden{display:none!important}.profile-modal-card{position:relative;width:min(100%,390px);padding:30px 22px 22px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 80px #0008}.profile-modal-card h2{margin:0 0 5px}.profile-modal-card p{overflow-wrap:anywhere}.modal-close{position:absolute;right:13px;top:10px;background:transparent;color:var(--muted);font-size:28px}.presence-label{font-size:13px;color:var(--muted);margin:18px 0}.presence-label.online-state{color:#65d99a}.clickable-profile{cursor:pointer}.clickable-profile:hover{opacity:.82}.presence-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#65d99a;margin-right:6px}
  @media(max-width:760px){.app{padding:0 10px}header{height:68px}.layout{grid-template-columns:1fr;gap:12px;padding:12px 0}.sidebar{position:static;display:flex;overflow:auto;padding:7px;gap:5px}.nav{white-space:nowrap;width:auto;margin:0;padding:10px}.nav span{width:auto;margin-right:5px}.side-note{display:none}.content{padding:15px;min-height:620px}.chat-layout{grid-template-columns:1fr}.chat-list{display:flex}.chat-item{padding:8px;flex-direction:row;text-align:left;font-size:13px}.chat-main{min-height:390px}.heading h1{font-size:21px}.header-user .muted{display:none}.auth-card{padding:22px}}
 </style>
@@ -90,7 +100,7 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
       <form class="send" id="sendForm"><input class="field" id="messageInput" maxlength="4000" placeholder="Написать сообщение…" autocomplete="off" disabled><button class="btn" id="sendButton" disabled>➤</button></form>
      </div>
     </div>
-    <div class="notice">MIRA 0.7.1 · Личные переписки сохраняются в Supabase и доступны с разных устройств.</div>
+    <div class="notice">MIRA 0.8 · Личные переписки сохраняются в Supabase и доступны с разных устройств.</div>
    </section>
    <section class="view" id="profile">
     <div class="heading"><h1>Профиль</h1></div>
@@ -102,6 +112,13 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
       <div class="formrow"><label for="avatarFile">Фотография профиля (JPG, PNG или WebP, до 5 МБ)</label><input class="field" id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp"></div>
       <div class="profile-actions"><button class="btn" id="saveProfileBtn">Сохранить профиль</button></div>
      </form>
+     <div class="elite-panel hidden" id="myAliasesPanel">
+      <h3>✦ MIRA Elite Names</h3>
+      <div class="muted small">Дополнительные имена твоего аккаунта. Все они ведут на один профиль.</div>
+      <div id="myAliasesList" class="alias-list"></div>
+      <form id="myAliasForm" class="elite-form"><input class="field" id="myAliasInput" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="Например, ceo" required><button class="btn" type="submit">Добавить имя</button></form>
+      <div class="muted small" id="myAliasesStatus" style="margin-top:8px">Доступно только участникам команды MIRA.</div>
+     </div>
     </div>
    </section>
    <section class="view" id="settings">
@@ -112,8 +129,14 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
       <label class="privacy-row"><span><b>Показывать время последнего посещения</b><small>Разрешить собеседникам видеть, когда ты был в сети.</small></span><input id="showLastSeenSetting" type="checkbox" checked></label>
       <div class="muted small" id="privacyStatus" style="margin-top:10px">Настройки приватности загружаются...</div>
     </div>
+    <div class="box hidden" id="eliteFounderPanel" style="margin-top:15px"><p><b>✦ Управление командой MIRA</b></p>
+     <p class="muted small">Только Founder может назначать разработчиков и выдавать им дополнительные имена.</p>
+     <form id="staffRoleForm" class="elite-form"><input class="field" id="staffUsernameInput" placeholder="Основной ник участника" required><select class="field" id="staffRoleSelect"><option value="developer">Назначить Developer</option><option value="none">Снять роль Developer</option></select><button class="btn" type="submit">Применить</button></form>
+     <form id="founderAliasForm" class="elite-form"><input class="field" id="founderAliasTarget" placeholder="Ник участника команды" required><input class="field" id="founderAliasInput" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="Дополнительное имя" required><button class="btn" type="submit">Выдать имя</button></form>
+     <div class="muted small" id="eliteFounderStatus" style="margin-top:8px"></div>
+    </div>
     <div class="box" style="margin-top:15px"><p><b>🔔 Push-уведомления</b></p><p class="muted small">Получай уведомления MIRA о новых сообщениях, даже когда приложение закрыто.</p><button class="btn" id="enablePushBtn" type="button">Включить уведомления</button><div class="muted small" id="pushStatus" style="margin-top:12px">Проверяем поддержку уведомлений...</div></div>
-    <div class="notice">Версия 0.7 · Регистрация, профили и личные сообщения через Supabase.</div>
+    <div class="notice">Версия 0.8 · Регистрация, профили и личные сообщения через Supabase.</div>
    </section>
   </main>
  </div>
@@ -162,7 +185,7 @@ const SUPABASE_KEY="sb_publishable_MewA7V5WkT2z1UlbVT20vg_p7TfEtlT";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const VAPID_PUBLIC_KEY="BDg34bps15kHFH_bvtDCd06dRUV2EKTfghO01UhB2LDUcdpESnMQ8M0q1ej6n0ers90lhqV41HPBpaSmBoUDyr4";
 let miraServiceWorker=null,currentUser=null,activeConversationId=null,messageChannel=null,conversationChannel=null,searchTimer=null,openingConversation=false,busy=false,conversationsRefreshTimer=null,conversationsLoading=false;
-let presenceTimer=null,currentPresenceSettings={show_online:true,show_last_seen:true},openedPublicProfile=null,profileChatTarget=null,activeChatProfile=null;
+let miraStaffRole=null, myAliasCache=[];\nlet presenceTimer=null,currentPresenceSettings={show_online:true,show_last_seen:true},openedPublicProfile=null,profileChatTarget=null,activeChatProfile=null;
 const authScreen=$("#authScreen"),app=$("#app"),authMessage=$("#authMessage"),registerPanel=$("#registerPanel"),loginPanel=$("#loginPanel");
 function showMessage(text,type="success"){authMessage.textContent=text;authMessage.className="auth-message show "+type}
 function switchToLogin(){registerPanel.classList.add("hidden");loginPanel.classList.remove("hidden");authMessage.className="auth-message"}
@@ -183,7 +206,51 @@ function initials(name){return (name?.trim()?.[0]||"M").toUpperCase()}
 function setAvatar(el,name,url){el.replaceChildren();if(url){const img=document.createElement("img");img.src=url;img.alt="Аватар";img.onerror=()=>{el.textContent=initials(name)};el.append(img)}else el.textContent=initials(name)}
 let activeProfile=null;
 function showProfile(profile,user){activeProfile=profile||{};const name=profile?.display_name||user.user_metadata?.display_name||"Пользователь",username=profile?.username||user.user_metadata?.username||"user";$("#headerUsername").textContent="@"+username;$("#profileName").textContent=name;$("#profileNick").textContent="@"+username;$("#profileBio").textContent=profile?.bio||"";$("#profileEmail").textContent=user.email||"";setAvatar($("#profileAvatar"),name,profile?.avatar_url);$("#editDisplayName").value=name;$("#editUsername").value=username;$("#editBio").value=profile?.bio||""}
-function showApp(user,profile){currentUser=user;authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence()}
+function renderAliasList(container,aliases,removable=false){
+ const el=typeof container==="string"?$(container):container;if(!el)return;el.innerHTML="";
+ if(!aliases?.length){el.innerHTML='<span class="muted small">Дополнительных имён пока нет.</span>';return}
+ for(const item of aliases){const alias=typeof item==="string"?item:item.alias;const chip=document.createElement("span");chip.className="alias-chip";const label=document.createElement("strong");label.textContent="@"+alias;chip.append(label);
+  if(removable){const remove=document.createElement("button");remove.type="button";remove.className="alias-remove";remove.textContent="×";remove.title="Удалить имя";remove.addEventListener("click",()=>removeEliteAlias(alias));chip.append(remove)}
+  el.append(chip)
+ }
+}
+async function loadEliteAccess(){
+ if(!currentUser)return;
+ const {data,error}=await supabase.rpc("mira_get_my_staff_role");
+ if(error){console.warn("MIRA Elite role:",error);return}
+ miraStaffRole=data||null;
+ $("#myAliasesPanel").classList.toggle("hidden",!miraStaffRole);
+ $("#eliteFounderPanel").classList.toggle("hidden",miraStaffRole!=="founder");
+ if(miraStaffRole){await loadMyAliases();$("#myAliasesStatus").textContent=miraStaffRole==="founder"?"Founder · управление дополнительными именами":"Developer · доступно до 3 дополнительных имён"}
+}
+async function loadMyAliases(){
+ if(!currentUser)return;const {data,error}=await supabase.rpc("mira_get_profile_aliases",{p_user_id:currentUser.id});
+ if(error){$("#myAliasesStatus").textContent="Не удалось загрузить имена: "+error.message;return}
+ myAliasCache=data||[];renderAliasList("#myAliasesList",myAliasCache,true)
+}
+async function removeEliteAlias(alias){
+ if(!confirm("Удалить дополнительное имя @"+alias+"?"))return;
+ const {data,error}=await supabase.rpc("mira_remove_alias",{p_alias:alias});
+ if(error||data===false){$("#myAliasesStatus").textContent="Не удалось удалить имя: "+(error?.message||"нет доступа");return}
+ await loadMyAliases()
+}
+$("#myAliasForm").addEventListener("submit",async e=>{
+ e.preventDefault();const alias=$("#myAliasInput").value.trim().replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(alias))return;
+ const {data,error}=await supabase.rpc("mira_add_alias",{p_user_id:currentUser.id,p_alias:alias});
+ if(error||data===false){$("#myAliasesStatus").textContent="Не удалось добавить имя: "+(error?.message||"имя занято или лимит достигнут");return}
+ $("#myAliasInput").value="";$("#myAliasesStatus").textContent="Дополнительное имя добавлено.";await loadMyAliases()
+});
+$("#staffRoleForm").addEventListener("submit",async e=>{
+ e.preventDefault();const username=$("#staffUsernameInput").value.trim().replace(/^@/,"").toLowerCase(),role=$("#staffRoleSelect").value;
+ const {data,error}=await supabase.rpc("mira_set_staff_role",{p_username:username,p_role:role});
+ $("#eliteFounderStatus").textContent=error?"Ошибка: "+error.message:(data?"Роль команды обновлена.":"Не удалось изменить роль.")
+});
+$("#founderAliasForm").addEventListener("submit",async e=>{
+ e.preventDefault();const username=$("#founderAliasTarget").value.trim().replace(/^@/,"").toLowerCase(),alias=$("#founderAliasInput").value.trim().replace(/^@/,"").toLowerCase();
+ const {data,error}=await supabase.rpc("mira_add_alias_for_username",{p_username:username,p_alias:alias});
+ $("#eliteFounderStatus").textContent=error?"Ошибка: "+error.message:(data?"Дополнительное имя выдано.":"Не удалось выдать имя.")
+});
+function showApp(user,profile){currentUser=user;authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess()}
 async function refreshSession(){const {data,error}=await supabase.auth.getSession();if(error)console.error(error);if(!data.session){app.classList.add("hidden");authScreen.classList.remove("hidden");return}const profile=await loadProfile(data.session.user);showApp(data.session.user,profile)}
 /* ONLINE-СТАТУС И ПРИВАТНОСТЬ */
 async function savePresence(isOnline){if(!currentUser)return;const payload={user_id:currentUser.id,is_online:!!isOnline,last_seen:new Date().toISOString(),show_online:currentPresenceSettings.show_online,show_last_seen:currentPresenceSettings.show_last_seen,updated_at:new Date().toISOString()};const {error}=await supabase.from("user_presence").upsert(payload,{onConflict:"user_id"});if(error)console.error("MIRA presence:",error)}
@@ -198,7 +265,7 @@ document.addEventListener("visibilitychange",()=>{if(currentUser)savePresence(do
 async function getPresence(userId){if(!currentUser||!userId)return null;const {data,error}=await supabase.rpc("mira_get_presence",{p_user_id:userId});if(error){console.error("MIRA get presence:",error);return null}return Array.isArray(data)?data[0]||null:data||null}
 function formatLastSeen(value){if(!value)return "Время посещения скрыто";const date=new Date(value);if(Number.isNaN(date.getTime()))return "Время посещения неизвестно";const diff=Math.max(0,Date.now()-date.getTime());if(diff<60000)return "был(а) только что";if(diff<3600000)return "был(а) "+Math.floor(diff/60000)+" мин. назад";if(diff<86400000)return "был(а) "+Math.floor(diff/3600000)+" ч. назад";return "был(а) "+date.toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
 async function updatePublicProfilePresence(){if(!openedPublicProfile)return;const p=await getPresence(openedPublicProfile.id);const el=$("#publicProfilePresence");el.classList.remove("online-state");if(!p){el.textContent="Статус пока неизвестен";return}if(p.is_online===true){el.textContent="● В сети";el.classList.add("online-state")}else if(p.is_online===false){el.textContent=p.last_seen?formatLastSeen(p.last_seen):"Не в сети · время посещения скрыто"}else{el.textContent=p.last_seen?formatLastSeen(p.last_seen):"Статус и время посещения скрыты"}}
-async function openPublicProfile(profile){if(!profile)return;openedPublicProfile=profile;profileChatTarget=profile;$("#publicProfileName").textContent=profile.display_name||"Пользователь";$("#publicProfileNick").textContent="@"+(profile.username||"user");$("#publicProfileBio").textContent=profile.bio||"";setAvatar($("#publicProfileAvatar"),profile.display_name,profile.avatar_url);$("#publicProfileModal").classList.remove("hidden");await updatePublicProfilePresence()}
+async function openPublicProfile(profile){if(!profile)return;openedPublicProfile=profile;profileChatTarget=profile;$("#publicProfileName").textContent=profile.display_name||"Пользователь";$("#publicProfileNick").textContent="@"+(profile.username||"user");$("#publicProfileBio").textContent=profile.bio||"";$("#publicProfileAliases").innerHTML="";setAvatar($("#publicProfileAvatar"),profile.display_name,profile.avatar_url);$("#publicProfileModal").classList.remove("hidden");const {data:aliases,error}=await supabase.rpc("mira_get_profile_aliases",{p_user_id:profile.id});if(!error)renderAliasList("#publicProfileAliases",aliases||[]);await updatePublicProfilePresence()}
 function closePublicProfile(){$("#publicProfileModal").classList.add("hidden");openedPublicProfile=null;profileChatTarget=null}
 $("#closePublicProfile").addEventListener("click",closePublicProfile);$("#publicProfileModal").addEventListener("click",e=>{if(e.target.id==="publicProfileModal")closePublicProfile()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closePublicProfile()});
 $("#profileMessageBtn").addEventListener("click",async()=>{const p=profileChatTarget;if(!p)return;closePublicProfile();await createConversation(p)});
@@ -224,7 +291,22 @@ async function deleteMessageEverywhere(id){if(!confirm("Удалить сооб�
 
 /* ПОИСК И СОЗДАНИЕ ЧАТА */
 $("#userSearch").addEventListener("input",()=>{clearTimeout(searchTimer);const query=$("#userSearch").value.trim().replace(/^@/,"").toLowerCase();if(query.length<2){$("#searchResults").innerHTML="";return}searchTimer=setTimeout(()=>searchUsers(query),350)});
-async function searchUsers(query){if(!currentUser)return;const {data,error}=await supabase.from("profiles").select("id,username,display_name,avatar_url,bio").ilike("username",query+"%").neq("id",currentUser.id).limit(10);if(error){console.error(error);$("#searchResults").innerHTML='<div class="empty-state">Ошибка поиска пользователей.</div>';return}const results=$("#searchResults");results.innerHTML="";if(!data?.length){results.innerHTML='<div class="empty-state">Пользователи не найдены.</div>';return}for(const p of data){const button=document.createElement("button");button.type="button";button.className="search-result";const avatar=document.createElement("div");avatar.className="avatar";setAvatar(avatar,p.display_name,p.avatar_url);const info=document.createElement("div"),name=document.createElement("b"),nick=document.createElement("div");name.textContent=p.display_name||"Пользователь";nick.className="muted small";nick.textContent="@"+p.username;info.append(name,nick);button.append(avatar,info);button.addEventListener("click",()=>createConversation(p));avatar.addEventListener("click",e=>{e.stopPropagation();openPublicProfile(p)});name.addEventListener("click",e=>{e.stopPropagation();openPublicProfile(p)});results.append(button)}}
+async function searchUsers(query){
+ if(!currentUser)return;
+ const {data,error}=await supabase.rpc("mira_search_profiles",{p_query:query});
+ if(error){console.error(error);$("#searchResults").innerHTML='<div class="empty-state">Ошибка поиска. Проверь SQL-систему Elite Names.</div>';return}
+ const results=$("#searchResults");results.innerHTML="";
+ if(!data?.length){results.innerHTML='<div class="empty-state">Пользователи не найдены.</div>';return}
+ for(const p of data){
+  if(p.id===currentUser.id)continue;
+  const button=document.createElement("button");button.type="button";button.className="search-result";
+  const avatar=document.createElement("div");avatar.className="avatar";setAvatar(avatar,p.display_name,p.avatar_url);
+  const info=document.createElement("div"),name=document.createElement("b"),nick=document.createElement("div");
+  name.textContent=p.display_name||"Пользователь";nick.className="muted small";nick.textContent="@"+p.username+(p.matched_alias?" · найдено по @"+p.matched_alias:"");
+  info.append(name,nick);button.append(avatar,info);button.addEventListener("click",()=>createConversation(p));
+  avatar.addEventListener("click",e=>{e.stopPropagation();openPublicProfile(p)});name.addEventListener("click",e=>{e.stopPropagation();openPublicProfile(p)});results.append(button)
+ }
+}
 async function createConversation(profile){if(!currentUser||!profile||profile.id===currentUser.id)return;const first=currentUser.id<profile.id?currentUser.id:profile.id,second=currentUser.id<profile.id?profile.id:currentUser.id;let {data:conversation,error}=await supabase.from("conversations").select("id").eq("user_one",first).eq("user_two",second).maybeSingle();if(error){console.error(error);toast("Не удалось проверить диалог.");return}if(!conversation){const result=await supabase.from("conversations").insert({user_one:first,user_two:second}).select("id").single();conversation=result.data;error=result.error;if(error){const retry=await supabase.from("conversations").select("id").eq("user_one",first).eq("user_two",second).maybeSingle();conversation=retry.data;error=retry.error}}if(error||!conversation){console.error(error);toast("Не удалось создать диалог.");return}$("#userSearch").value="";$("#searchResults").innerHTML="";const chat={id:conversation.id,userId:profile.id,username:profile.username||"user",name:profile.display_name||"Пользователь",avatar_url:profile.avatar_url||null,bio:profile.bio||""};await loadConversations();await openConversation(chat)}
 $("#newChat").addEventListener("click",()=>{$("#userSearch").focus();toast("Введи никнейм пользователя в поиске.")});
 
