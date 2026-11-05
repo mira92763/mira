@@ -56,6 +56,7 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
  .elite-form .field{min-width:0}
  .alias-remove{background:transparent;color:#ff9eae;padding:4px 7px}
  @media(max-width:600px){.elite-form{grid-template-columns:1fr}.elite-form .btn{width:100%}}
+ .gift-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-top:14px}.gift-card{background:var(--panel2);border:1px solid var(--line);border-radius:15px;padding:14px;text-align:center;min-width:0}.gift-emoji{font-size:36px;line-height:1.4}.gift-rarity{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:5px 0}.gift-card h3{font-size:14px;margin:4px 0}.gift-card p{font-size:11px;color:var(--muted);line-height:1.4;min-height:30px;margin:5px 0 10px}.gift-serial{font-size:11px;color:var(--muted);margin-top:6px}.gift-modal{position:fixed;inset:0;z-index:35;background:#050610c9;display:grid;place-items:center;padding:16px}.gift-modal.hidden{display:none!important}.gift-modal-card{width:min(100%,620px);max-height:85vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;position:relative}.gift-modal-card h2{margin:0 35px 5px 0}.gift-close{position:absolute;right:14px;top:10px;background:transparent;color:var(--muted);font-size:28px}.gift-section{margin-top:20px}.gift-section h2{font-size:19px}.gift-empty{padding:22px;text-align:center;color:var(--muted);background:var(--panel2);border-radius:14px;font-size:13px}
  .profile-modal{position:fixed;inset:0;z-index:30;background:#050610b8;display:grid;place-items:center;padding:18px}.profile-modal.hidden{display:none!important}.profile-modal-card{position:relative;width:min(100%,390px);padding:30px 22px 22px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 80px #0008}.profile-modal-card h2{margin:0 0 5px}.profile-modal-card p{overflow-wrap:anywhere}.modal-close{position:absolute;right:13px;top:10px;background:transparent;color:var(--muted);font-size:28px}.presence-label{font-size:13px;color:var(--muted);margin:18px 0}.presence-label.online-state{color:#65d99a}.clickable-profile{cursor:pointer}.clickable-profile:hover{opacity:.82}.presence-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#65d99a;margin-right:6px}
  @media(max-width:760px){.app{padding:0 10px}header{height:68px}.layout{grid-template-columns:1fr;gap:12px;padding:12px 0}.sidebar{position:static;display:flex;overflow:auto;padding:7px;gap:5px}.nav{white-space:nowrap;width:auto;margin:0;padding:10px}.nav span{width:auto;margin-right:5px}.side-note{display:none}.content{padding:15px;min-height:620px}.chat-layout{grid-template-columns:1fr}.chat-list{display:flex}.chat-item{padding:8px;flex-direction:row;text-align:left;font-size:13px}.chat-main{min-height:390px}.heading h1{font-size:21px}.header-user .muted{display:none}.auth-card{padding:22px}}
 </style>
@@ -88,7 +89,7 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
   <div class="header-user"><span class="muted" id="headerUsername"></span><button class="btn secondary" id="logoutBtn" type="button">Выйти</button></div>
  </header>
  <div class="layout">
-  <aside class="sidebar"><button class="nav active" data-view="chats"><span>▤</span>Чаты</button><button class="nav" data-view="profile"><span>◉</span>Профиль</button><button class="nav" data-view="settings"><span>⚙</span>Настройки</button><div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div></aside>
+  <aside class="sidebar"><button class="nav active" data-view="chats"><span>▤</span>Чаты</button><button class="nav" data-view="profile"><span>◉</span>Профиль</button><button class="nav" data-view="gifts"><span>🎁</span>Подарки</button><button class="nav" data-view="settings"><span>⚙</span>Настройки</button><div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div></aside>
   <main class="content">
    <section class="view active" id="chats">
     <div class="heading"><div><h1>Сообщения</h1><div class="muted small">Твои диалоги в одном месте</div></div><button class="btn secondary" id="newChat" type="button">＋ Новый чат</button></div>
@@ -121,6 +122,11 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
      </div>
     </div>
    </section>
+   <section class="view" id="gifts">
+    <div class="heading"><div><h1>Коллекция подарков</h1><div class="muted small">Уникальные подарки, которые тебе отправили</div></div><button class="btn secondary" id="refreshGiftsBtn" type="button">Обновить</button></div>
+    <div class="box"><div class="muted small" id="giftCollectionCount">Загружаем коллекцию...</div><div class="gift-grid" id="myGiftCollection"></div></div>
+    <div class="notice">Каждый подарок получает собственный серийный номер. Сейчас подарки бесплатные и существуют внутри MIRA.</div>
+   </section>
    <section class="view" id="settings">
     <div class="heading"><h1>Настройки</h1></div>
     <div class="box"><p><b>🎨 Оформление</b></p><div class="theme-picker" id="themePicker" tabindex="0"><button type="button" class="theme-arrow" id="themePrev">‹</button><div class="theme-choice"><div class="theme-preview" id="themePreview"><i></i><i></i><i></i></div><b id="themeName">Тёмная</b><div class="muted small">Свайпните влево или вправо</div></div><button type="button" class="theme-arrow" id="themeNext">›</button></div><div class="theme-dots" id="themeDots"></div><p class="muted small" style="text-align:center">Можно также нажимать на стрелки.</p></div>
@@ -150,9 +156,10 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
   <p class="muted small" id="publicProfileBio"></p>
   <div class="alias-list" id="publicProfileAliases" aria-label="Дополнительные имена"></div>
   <div class="presence-label" id="publicProfilePresence">Статус пока неизвестен</div>
-  <button class="btn" id="profileMessageBtn" type="button">Написать сообщение</button>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn secondary" id="profileGiftBtn" type="button">🎁 Подарить</button><button class="btn" id="profileMessageBtn" type="button">Написать сообщение</button></div>
  </div>
 </div>
+<div class="gift-modal hidden" id="giftPickerModal" role="dialog" aria-modal="true" aria-labelledby="giftPickerTitle"><div class="gift-modal-card"><button class="gift-close" id="closeGiftPicker" type="button" aria-label="Закрыть">×</button><h2 id="giftPickerTitle">Выбери подарок</h2><p class="muted small" id="giftPickerRecipient">Подарок будет отправлен пользователю</p><div class="gift-grid" id="giftCatalogGrid"><div class="gift-empty">Загружаем каталог...</div></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
 "use strict";
@@ -201,6 +208,48 @@ async function registerMiraServiceWorker(){if(!("serviceWorker" in navigator))th
 async function savePushSubscription(subscription){if(!currentUser)throw new Error("Пользователь не авторизован");const s=subscription.toJSON(),p256dh=s.keys?.p256dh,auth=s.keys?.auth;if(!subscription.endpoint||!p256dh||!auth)throw new Error("Не удалось получить данные Push-подписки");const {error}=await supabase.from("push_subscriptions").upsert({user_id:currentUser.id,endpoint:subscription.endpoint,p256dh,auth},{onConflict:"endpoint"});if(error)throw error;return true}
 async function updatePushStatus(){const status=$("#pushStatus"),button=$("#enablePushBtn");if(!status||!button)return;if(!("Notification" in window)){status.textContent="Уведомления не поддерживаются";return}if(Notification.permission==="denied"){status.textContent="Уведомления заблокированы в настройках браузера";return}if(Notification.permission==="granted"){try{const registration=await registerMiraServiceWorker(),subscription=await registration.pushManager.getSubscription();if(subscription&&currentUser){await savePushSubscription(subscription);status.textContent="Уведомления MIRA включены";button.textContent="Обновить регистрацию";return}}catch(error){console.error(error)}}status.textContent="Уведомления пока не включены"}
 $("#enablePushBtn").addEventListener("click",async()=>{const button=$("#enablePushBtn"),status=$("#pushStatus");button.disabled=true;try{if(!currentUser)throw new Error("Сначала войди в MIRA");if(!("Notification" in window))throw new Error("Уведомления не поддерживаются");if(!miraServiceWorker)throw new Error("Service Worker ещё загружается. Обнови MIRA и попробуй снова.");if(Notification.permission==="default"){status.textContent="Запрашиваем разрешение...";const permission=await Notification.requestPermission();if(permission!=="granted")throw new Error("Разрешение не предоставлено");status.textContent="Разрешение получено! Нажми кнопку ещё раз для создания подписки.";button.textContent="Создать Push-подписку";return}if(Notification.permission!=="granted")throw new Error("Уведомления заблокированы");button.textContent="Создаём подписку...";status.textContent="Подключаем Push...";const existingSubscription=await miraServiceWorker.pushManager.getSubscription();if(existingSubscription){const oldEndpoint=existingSubscription.endpoint;const unsubscribed=await existingSubscription.unsubscribe();if(!unsubscribed)throw new Error("Не удалось обновить старую Push-подписку. Попробуй ещё раз.");const {error:deleteError}=await supabase.from("push_subscriptions").delete().eq("user_id",currentUser.id).eq("endpoint",oldEndpoint);if(deleteError)throw deleteError}const subscription=await miraServiceWorker.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)});if(!subscription)throw new Error("Push-подписка не создана");button.textContent="Сохраняем...";status.textContent="Сохраняем устройство в MIRA...";await savePushSubscription(subscription);status.textContent="Уведомления MIRA подключены!";button.textContent="Уведомления включены";toast("Push успешно подключён!")}catch(error){console.error("MIRA PUSH ERROR:",error);status.textContent="Ошибка: "+(error.message||error.name);button.textContent="Повторить подключение";alert("Ошибка MIRA Push:\n\n"+(error.message||error.name))}finally{button.disabled=false}});
+
+
+/* MIRA GIFTS */
+const giftRarityNames={common:"Обычный",rare:"Редкий",epic:"Эпический",legendary:"Легендарный"};
+function createGiftCard(gift,owned=false){
+ const card=document.createElement("article");card.className="gift-card";
+ const emoji=document.createElement("div");emoji.className="gift-emoji";emoji.textContent=gift.emoji||"🎁";
+ const rarity=document.createElement("div");rarity.className="gift-rarity";rarity.textContent=giftRarityNames[gift.rarity]||"Подарок";
+ const title=document.createElement("h3");title.textContent=gift.title||"Подарок";
+ const desc=document.createElement("p");desc.textContent=gift.description||"Коллекционный подарок MIRA";
+ card.append(emoji,rarity,title,desc);
+ if(owned){const serial=document.createElement("div");serial.className="gift-serial";serial.textContent="#"+gift.serial_number;card.append(serial)}
+ else{const send=document.createElement("button");send.type="button";send.className="btn";send.textContent="Отправить";send.addEventListener("click",()=>sendMiraGift(gift));card.append(send)}
+ return card
+}
+async function loadGiftCatalog(){
+ const grid=$("#giftCatalogGrid");grid.innerHTML='<div class="gift-empty">Загружаем каталог...</div>';
+ const {data,error}=await supabase.from("gift_catalog").select("id,title,description,rarity,emoji").eq("is_active",true).order("rarity").order("title");
+ if(error){console.error("MIRA Gifts catalog:",error);grid.innerHTML='<div class="gift-empty">Не удалось загрузить каталог. '+(error.message||"")+'</div>';return}
+ grid.innerHTML="";
+ if(!data?.length){grid.innerHTML='<div class="gift-empty">Каталог пока пуст.</div>';return}
+ data.forEach(gift=>grid.append(createGiftCard(gift,false)))
+}
+async function sendMiraGift(gift){
+ const recipient=profileChatTarget;
+ if(!currentUser||!recipient||recipient.id===currentUser.id)return;
+ const buttons=$("#giftCatalogGrid").querySelectorAll("button");buttons.forEach(b=>b.disabled=true);
+ const {data,error}=await supabase.rpc("mira_send_gift",{p_recipient_id:recipient.id,p_gift_id:gift.id});
+ buttons.forEach(b=>b.disabled=false);
+ if(error){console.error("MIRA Gifts send:",error);toast("Не удалось отправить подарок: "+error.message);return}
+ $("#giftPickerModal").classList.add("hidden");closePublicProfile();toast("Подарок «"+gift.title+"» отправлен!");
+}
+async function loadMyGifts(){
+ if(!currentUser)return;
+ const grid=$("#myGiftCollection"),count=$("#giftCollectionCount");grid.innerHTML='<div class="gift-empty">Загружаем коллекцию...</div>';count.textContent="Обновляем...";
+ const {data,error}=await supabase.from("gift_instances").select("id,gift_id,serial_number,created_at,gift_catalog(title,description,rarity,emoji)").eq("owner_id",currentUser.id).order("created_at",{ascending:false});
+ if(error){console.error("MIRA Gifts collection:",error);count.textContent="Не удалось загрузить коллекцию";grid.innerHTML='<div class="gift-empty">Ошибка загрузки: '+(error.message||"")+'</div>';return}
+ const items=(data||[]).filter(item=>item.gift_catalog).map(item=>({...item.gift_catalog,serial_number:item.serial_number,created_at:item.created_at}));
+ count.textContent="Всего подарков: "+items.length;grid.innerHTML="";
+ if(!items.length){grid.innerHTML='<div class="gift-empty">Пока подарков нет. Попроси друзей отправить тебе первый!</div>';return}
+ items.forEach(item=>grid.append(createGiftCard(item,true)))
+}
 
 /* ПРОФИЛЬ */
 async function loadProfile(user){const {data,error}=await supabase.from("profiles").select("id,username,display_name,avatar_url,bio").eq("id",user.id).maybeSingle();if(error)console.error("Ошибка загрузки профиля:",error);return data}
@@ -252,7 +301,7 @@ $("#founderAliasForm").addEventListener("submit",async e=>{
  const {data,error}=await supabase.rpc("mira_add_alias_for_username",{p_username:username,p_alias:alias});
  $("#eliteFounderStatus").textContent=error?"Ошибка: "+error.message:(data?"Дополнительное имя выдано.":"Не удалось выдать имя.")
 });
-function showApp(user,profile){currentUser=user;authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess()}
+function showApp(user,profile){currentUser=user;authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess();loadMyGifts()}
 async function refreshSession(){const {data,error}=await supabase.auth.getSession();if(error)console.error(error);if(!data.session){app.classList.add("hidden");authScreen.classList.remove("hidden");return}const profile=await loadProfile(data.session.user);showApp(data.session.user,profile)}
 /* ONLINE-СТАТУС И ПРИВАТНОСТЬ */
 async function savePresence(isOnline){if(!currentUser)return;const {error}=await supabase.rpc("mira_set_presence",{p_is_online:!!isOnline});if(!error)return;console.warn("MIRA presence RPC unavailable; using legacy fallback:",error.message);const now=new Date().toISOString(),payload={user_id:currentUser.id,is_online:!!isOnline,last_seen:now,show_online:currentPresenceSettings.show_online,show_last_seen:currentPresenceSettings.show_last_seen,updated_at:now};const fallback=await supabase.from("user_presence").upsert(payload,{onConflict:"user_id"});if(fallback.error)console.error("MIRA presence:",fallback.error)}
@@ -271,6 +320,10 @@ async function openPublicProfile(profile){if(!profile)return;openedPublicProfile
 function closePublicProfile(){$("#publicProfileModal").classList.add("hidden");openedPublicProfile=null;profileChatTarget=null}
 $("#closePublicProfile").addEventListener("click",closePublicProfile);$("#publicProfileModal").addEventListener("click",e=>{if(e.target.id==="publicProfileModal")closePublicProfile()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closePublicProfile()});
 $("#profileMessageBtn").addEventListener("click",async()=>{const p=profileChatTarget;if(!p)return;closePublicProfile();await createConversation(p)});
+$("#profileGiftBtn").addEventListener("click",async()=>{const p=profileChatTarget;if(!p||!currentUser)return;if(p.id===currentUser.id){toast("Нельзя отправить подарок самому себе.");return}$("#giftPickerRecipient").textContent="Для "+(p.display_name||"пользователя")+" · @"+(p.username||"user");$("#giftPickerModal").classList.remove("hidden");await loadGiftCatalog()});
+$("#closeGiftPicker").addEventListener("click",()=>$("#giftPickerModal").classList.add("hidden"));
+$("#giftPickerModal").addEventListener("click",e=>{if(e.target.id==="giftPickerModal")$("#giftPickerModal").classList.add("hidden")});
+$("#refreshGiftsBtn").addEventListener("click",loadMyGifts);
 
 $("#profileForm").addEventListener("submit",async e=>{e.preventDefault();if(!currentUser)return;const button=$("#saveProfileBtn"),display_name=$("#editDisplayName").value.trim(),username=$("#editUsername").value.trim().toLowerCase(),bio=$("#editBio").value.trim(),file=$("#avatarFile").files[0];if(!display_name||display_name.length>40){toast("Имя должно содержать от 1 до 40 символов.");return}if(!/^[a-z0-9_]{3,20}$/.test(username)){toast("Никнейм должен содержать 3–20 латинских букв, цифр или _.");return}if(bio.length>160){toast("Описание слишком длинное.");return}if(file&&(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024)){toast("Выбери JPG, PNG или WebP до 5 МБ.");return}button.disabled=true;button.textContent="Сохраняем...";try{const {data:duplicate,error:checkError}=await supabase.from("profiles").select("id").ilike("username",username).neq("id",currentUser.id).limit(1);if(checkError)throw checkError;if(duplicate?.length){toast("Этот никнейм уже занят.");return}let avatar_url=activeProfile?.avatar_url||null;if(file){const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error:uploadError}=await supabase.storage.from("mira-avatars").upload(path,file,{contentType:file.type,upsert:false});if(uploadError)throw uploadError;avatar_url=supabase.storage.from("mira-avatars").getPublicUrl(path).data.publicUrl}const {error}=await supabase.from("profiles").update({display_name,username,bio,avatar_url}).eq("id",currentUser.id);if(error){if(error.code==="23505")throw new Error("Этот никнейм уже занят.");throw error}const profile=await loadProfile(currentUser);showProfile(profile,currentUser);$("#avatarFile").value="";await loadConversations();toast("Профиль MIRA обновлён!")}catch(error){console.error(error);toast("Не удалось сохранить профиль: "+(error.message||"ошибка"))}finally{button.disabled=false;button.textContent="Сохранить профиль"}});
 
