@@ -463,7 +463,7 @@ async function searchUsers(query){
   const avatar=document.createElement("div");avatar.className="avatar";setAvatar(avatar,p.display_name,p.avatar_url);
   const info=document.createElement("div"),name=document.createElement("b"),nick=document.createElement("div");
   name.textContent=p.display_name||"Пользователь";nick.className="muted small";nick.textContent="@"+p.username+(p.matched_alias?" · найдено по @"+p.matched_alias:"");
-  info.append(name,nick);button.append(avatar,info);button.addEventListener("click",()=>createConversation(p));
+  info.append(name,nick);button.append(avatar,info);button.addEventListener("click",()=>openPublicProfile(p));
   avatar.addEventListener("click",e=>{e.stopPropagation();openPublicProfile(p)});name.addEventListener("click",e=>{e.stopPropagation();openPublicProfile(p)});results.append(button)
  }
 }
