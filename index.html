@@ -185,7 +185,8 @@ const SUPABASE_KEY="sb_publishable_MewA7V5WkT2z1UlbVT20vg_p7TfEtlT";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const VAPID_PUBLIC_KEY="BDg34bps15kHFH_bvtDCd06dRUV2EKTfghO01UhB2LDUcdpESnMQ8M0q1ej6n0ers90lhqV41HPBpaSmBoUDyr4";
 let miraServiceWorker=null,currentUser=null,activeConversationId=null,messageChannel=null,conversationChannel=null,searchTimer=null,openingConversation=false,busy=false,conversationsRefreshTimer=null,conversationsLoading=false;
-let miraStaffRole=null, myAliasCache=[];\nlet presenceTimer=null,currentPresenceSettings={show_online:true,show_last_seen:true},openedPublicProfile=null,profileChatTarget=null,activeChatProfile=null;
+let miraStaffRole=null, myAliasCache=[];
+let presenceTimer=null,currentPresenceSettings={show_online:true,show_last_seen:true},openedPublicProfile=null,profileChatTarget=null,activeChatProfile=null;
 const authScreen=$("#authScreen"),app=$("#app"),authMessage=$("#authMessage"),registerPanel=$("#registerPanel"),loginPanel=$("#loginPanel");
 function showMessage(text,type="success"){authMessage.textContent=text;authMessage.className="auth-message show "+type}
 function switchToLogin(){registerPanel.classList.add("hidden");loginPanel.classList.remove("hidden");authMessage.className="auth-message"}
