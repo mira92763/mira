@@ -460,6 +460,14 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
  .nav span{flex-basis:17px;width:17px;min-width:17px;font-size:15px}
 }
 
+
+/* MIRA CHAT LIST — scroll area reaches the true bottom */
+.chat-list-panel #chatList{padding-bottom:26px!important;scroll-padding-bottom:26px;box-sizing:border-box}
+@media(max-width:760px){
+ .chat-list-panel{max-height:calc(100dvh - 165px)!important}
+ .chat-list-panel #chatList{padding-bottom:32px!important;scroll-padding-bottom:32px;-webkit-overflow-scrolling:touch}
+}
+
 </style>
 </head>
 <body class="booting">
@@ -991,20 +999,3 @@ await refreshSession();
 </script>
 </body>
 </html>
-
-/* MIRA CHAT LIST — scroll area reaches the true bottom */
-.chat-list-panel #chatList{
-  padding-bottom:26px!important;
-  scroll-padding-bottom:26px;
-  box-sizing:border-box;
-}
-@media(max-width:760px){
-  .chat-list-panel{
-    max-height:calc(100dvh - 165px)!important;
-  }
-  .chat-list-panel #chatList{
-    padding-bottom:32px!important;
-    scroll-padding-bottom:32px;
-    -webkit-overflow-scrolling:touch;
-  }
-}
