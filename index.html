@@ -107,9 +107,28 @@ body.booting::after{content:"";position:fixed;z-index:9998;left:calc(50% - 38px)
 @keyframes bootPulse{50%{box-shadow:0 0 0 12px #8c7cf61c;transform:translate(-50%,-50%) scale(1.04)}}
 @keyframes bootLine{0%{opacity:.35;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}100%{opacity:.35;transform:scaleX(.4)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* MIRA Winter / New Year edition */
+.winter-banner{display:none;align-items:center;gap:12px;margin:14px 0 0;padding:12px 16px;border:1px solid #b99b5a55;border-radius:15px;background:linear-gradient(105deg,#17372d,#24352c 55%,#49262b);color:#fff4d8;box-shadow:0 8px 26px #07120d55;overflow:hidden;position:relative}
+.winter-banner:after{content:"✦  ·  ❄  ·  ✦";margin-left:auto;color:#e5d5a5;letter-spacing:5px;white-space:nowrap;opacity:.8}
+.winter-banner-icon{font-size:24px;filter:drop-shadow(0 2px 8px #d6b56d55)}.winter-banner strong{display:block;font-size:13px;letter-spacing:.2px}.winter-banner span{display:block;font-size:11px;color:#d5d9c8;margin-top:2px}
+body.winter-theme .winter-banner{display:flex}
+body.winter-theme{background:radial-gradient(ellipse at 12% -8%,#28523b 0,transparent 36%),radial-gradient(ellipse at 92% 0%,#572b32 0,transparent 32%),var(--bg)}
+body.winter-theme .logo{background:linear-gradient(135deg,#e5cc88,#9c3e4a);box-shadow:0 0 24px #d6b56d2b}
+body.winter-theme .btn:not(.secondary){background:linear-gradient(135deg,#d8bd79,#9e4650);color:#fffaf0}
+body.winter-theme .nav.active,body.winter-theme .chat-item.active{box-shadow:inset 3px 0 #d6b56d}
+body.winter-theme .bubble.mine{background:linear-gradient(135deg,#8d3e49,#6c303b)}
+.winter-snow{display:none;position:fixed;inset:0;z-index:8;pointer-events:none;overflow:hidden;opacity:.48}
+body.winter-theme .winter-snow{display:block}
+.winter-snow i{position:absolute;top:-18px;width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 0 7px #fff;animation:winterFall linear infinite}
+.winter-snow i:nth-child(1){left:4%;animation-duration:13s;animation-delay:-8s}.winter-snow i:nth-child(2){left:10%;width:3px;height:3px;animation-duration:17s;animation-delay:-2s}.winter-snow i:nth-child(3){left:17%;animation-duration:15s;animation-delay:-11s}.winter-snow i:nth-child(4){left:24%;width:5px;height:5px;animation-duration:19s;animation-delay:-5s}.winter-snow i:nth-child(5){left:31%;animation-duration:14s;animation-delay:-9s}.winter-snow i:nth-child(6){left:39%;width:3px;height:3px;animation-duration:18s;animation-delay:-3s}.winter-snow i:nth-child(7){left:46%;animation-duration:16s;animation-delay:-13s}.winter-snow i:nth-child(8){left:53%;width:5px;height:5px;animation-duration:20s;animation-delay:-7s}.winter-snow i:nth-child(9){left:60%;animation-duration:14s;animation-delay:-4s}.winter-snow i:nth-child(10){left:67%;width:3px;height:3px;animation-duration:18s;animation-delay:-10s}.winter-snow i:nth-child(11){left:73%;animation-duration:15s;animation-delay:-6s}.winter-snow i:nth-child(12){left:80%;width:5px;height:5px;animation-duration:21s;animation-delay:-15s}.winter-snow i:nth-child(13){left:87%;animation-duration:16s;animation-delay:-1s}.winter-snow i:nth-child(14){left:94%;width:3px;height:3px;animation-duration:19s;animation-delay:-12s}
+@keyframes winterFall{0%{transform:translate3d(0,-5vh,0);opacity:0}12%{opacity:.85}88%{opacity:.7}100%{transform:translate3d(28px,110vh,0);opacity:0}}
+@media(max-width:600px){.winter-banner{padding:10px 12px}.winter-banner:after{font-size:10px;letter-spacing:2px}.winter-banner span{max-width:230px}}
+@media(prefers-reduced-motion:reduce){.winter-snow i{animation:none;display:none}}
 </style>
 </head>
 <body class="booting">
+<div class="winter-snow" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <section class="auth-screen hidden" id="authScreen">
  <div class="auth-card">
   <div class="auth-brand"><div class="logo">M</div><div><div class="brand-name">MIRA</div><div class="tagline">Новое время — большие амбиции.</div></div></div>
@@ -136,6 +155,7 @@ body.booting::after{content:"";position:fixed;z-index:9998;left:calc(50% - 38px)
  <header><div class="brand"><div class="logo">M</div><div><div class="brand-name">MIRA</div><div class="tagline">Новое время — большие амбиции.</div></div></div>
   <div class="header-user"><span class="muted" id="headerUsername"></span><button class="btn secondary" id="logoutBtn" type="button">Выйти</button></div>
  </header>
+ <div class="winter-banner" aria-label="Новогоднее оформление"><div class="winter-banner-icon">❄️</div><div><strong>Зимняя MIRA</strong><span>Пусть этой зимой будет больше тёплых сообщений.</span></div></div>
  <div class="layout">
   <aside class="sidebar"><button class="nav active" data-view="chats"><span>▤</span>Чаты</button><button class="nav" data-view="profile"><span>◉</span>Профиль</button><button class="nav" data-view="gifts"><span>🎁</span>Подарки</button><button class="nav" data-view="settings"><span>⚙</span>Настройки</button><div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div></aside>
   <main class="content">
@@ -230,9 +250,10 @@ const themes=[
  {name:"Графит",vars:{"--bg":"#17191c","--panel":"#22262b","--panel2":"#2d333a","--line":"#414951","--text":"#f4f6f8","--muted":"#a6afb8","--accent":"#aab4c0","--accent2":"#687582"},preview:"#17191c",accent:"#aab4c0"},
  {name:"Розовая",vars:{"--bg":"#24151f","--panel":"#35202e","--panel2":"#472b3d","--line":"#624057","--text":"#fff1f8","--muted":"#c7a5b8","--accent":"#ec83b5","--accent2":"#b94f88"},preview:"#24151f",accent:"#ec83b5"},
  {name:"Красная",vars:{"--bg":"#211313","--panel":"#321b1c","--panel2":"#452526","--line":"#633638","--text":"#fff2f1","--muted":"#c9a1a0","--accent":"#ed6b67","--accent2":"#ad3d43"},preview:"#211313",accent:"#ed6b67"},
- {name:"Фиолетовая",vars:{"--bg":"#1a1428","--panel":"#282039","--panel2":"#372c4d","--line":"#514067","--text":"#f7f0ff","--muted":"#b7a8ce","--accent":"#b18aff","--accent2":"#7952c7"},preview:"#1a1428",accent:"#b18aff"}];
+ {name:"Фиолетовая",vars:{"--bg":"#1a1428","--panel":"#282039","--panel2":"#372c4d","--line":"#514067","--text":"#f7f0ff","--muted":"#b7a8ce","--accent":"#b18aff","--accent2":"#7952c7"},preview:"#1a1428",accent:"#b18aff"},
+{name:"Новый год",winter:true,vars:{"--bg":"#0b1713","--panel":"#14251e","--panel2":"#1d3429","--line":"#355343","--text":"#f5f3e9","--muted":"#a9b9a9","--accent":"#d6b56d","--accent2":"#934650"},preview:"#0b1713",accent:"#d6b56d"}];
 let themeIndex=Number(readStore("mira_theme_v1",0));if(!Number.isInteger(themeIndex)||themeIndex<0||themeIndex>=themes.length)themeIndex=0;
-function setTheme(i){themeIndex=(i+themes.length)%themes.length;const t=themes[themeIndex];Object.entries(t.vars).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));$("#themeName").textContent=t.name;$("#themePreview").style.background=t.preview;$("#themePreview").style.borderColor=t.accent;$("#themePreview").querySelectorAll("i").forEach((x,j)=>x.style.background=j===1?"var(--panel)":t.accent);$("#themeDots").innerHTML=themes.map((_,j)=>`<span class="${j===themeIndex?"selected":""}"></span>`).join("");saveStore("mira_theme_v1",themeIndex)}
+function setTheme(i){themeIndex=(i+themes.length)%themes.length;const t=themes[themeIndex];document.body.classList.toggle("winter-theme",!!t.winter);Object.entries(t.vars).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));$("#themeName").textContent=t.name;$("#themePreview").style.background=t.preview;$("#themePreview").style.borderColor=t.accent;$("#themePreview").querySelectorAll("i").forEach((x,j)=>x.style.background=j===1?"var(--panel)":t.accent);$("#themeDots").innerHTML=themes.map((_,j)=>`<span class="${j===themeIndex?"selected":""}"></span>`).join("");saveStore("mira_theme_v1",themeIndex)}
 $("#themePrev").addEventListener("click",()=>setTheme(themeIndex-1));$("#themeNext").addEventListener("click",()=>setTheme(themeIndex+1));
 const picker=$("#themePicker");let pointerStart=null;
 picker.addEventListener("pointerdown",e=>{if(e.target.closest(".theme-arrow"))return;pointerStart={id:e.pointerId,x:e.clientX,y:e.clientY}});
