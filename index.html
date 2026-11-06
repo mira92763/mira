@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MIRA">
-<title>MIRA 0.9 — Новое время, большие амбиции</title>
+<title>MIRA 0.10 — Новое время, большие амбиции</title>
 <style>
 :root{--bg:#10111a;--panel:#191b29;--panel2:#222538;--line:#30344a;--text:#f4f3ff;--muted:#999db4;--accent:#8c7cf6;--accent2:#6557cf}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}html,body{touch-action:pan-x pan-y;overscroll-behavior-x:none}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#302957 0,transparent 40%),var(--bg);color:var(--text);font:15px Inter,system-ui,sans-serif;min-height:100vh}input,textarea,[contenteditable="true"],.bubble{user-select:text;-webkit-user-select:text;-webkit-touch-callout:default}
@@ -628,7 +628,7 @@ body.booting::after{background:linear-gradient(90deg,transparent,var(--accent),t
       <div class="muted small">Дополнительные имена твоего аккаунта. Все они ведут на один профиль. До 3 имён.</div>
       <div id="myAliasesList" class="alias-list"></div>
       <form id="myAliasForm" class="elite-form"><input class="field" id="myAliasInput" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="Например, mister" required><button class="btn" id="buyAliasBtn" type="submit">Купить за 500 M</button></form>
-      <div class="muted small" id="myAliasesStatus" style="margin-top:8px">Одно дополнительное имя — 500 MIRA Coins. Для команды MIRA добавление бесплатно.</div>
+      <div class="muted small" id="myAliasesStatus" style="margin-top:8px">Одно дополнительное имя — 500 MIRA Coins. Для команды MIRA добавление бесплатно. Удаление имени не возвращает монеты.</div>
      </div>
     </div>
     </div>
@@ -653,7 +653,7 @@ body.booting::after{background:linear-gradient(90deg,transparent,var(--accent),t
      <div class="muted small" id="eliteFounderStatus" style="margin-top:8px"></div>
     </div>
     <div class="box" style="margin-top:15px"><p><b>🔔 Push-уведомления</b></p><p class="muted small">Получай уведомления MIRA о новых сообщениях, даже когда приложение закрыто.</p><button class="btn" id="enablePushBtn" type="button">Включить уведомления</button><div class="muted small" id="pushStatus" style="margin-top:12px">Проверяем поддержку уведомлений...</div></div>
-    <div class="notice">Версия 0.9 · Регистрация, профили, переписки и статусы через Supabase.</div>
+    <div class="notice">Версия 0.10 · Регистрация, профили, переписки и статусы через Supabase.</div>
    </section>
   </main>
  </div>
@@ -898,7 +898,7 @@ async function loadProfile(user){const {data,error}=await supabase.from("profile
 function initials(name){return (name?.trim()?.[0]||"M").toUpperCase()}
 function setAvatar(el,name,url){el.replaceChildren();if(url){const img=document.createElement("img");img.src=url;img.alt="Аватар";img.onerror=()=>{el.textContent=initials(name)};el.append(img)}else el.textContent=initials(name)}
 let activeProfile=null;
-function showProfile(profile,user){activeProfile=profile||{};const name=profile?.display_name||user.user_metadata?.display_name||"Пользователь",username=profile?.username||user.user_metadata?.username||"user";$("#headerUsername").textContent="@"+username;$("#profileName").textContent=name;$("#profileNick").textContent="@"+username;$("#profileBio").textContent=profile?.bio||"";$("#profileEmail").textContent=user.email||"";setAvatar($("#profileAvatar"),name,profile?.avatar_url);$("#editDisplayName").value=name;$("#editUsername").value=username;$("#editBio").value=profile?.bio||""}
+function showProfile(profile,user){activeProfile=profile||{};const name=profile?.display_name||user.user_metadata?.display_name||"Пользователь",username=profile?.username||user.user_metadata?.username||"user";$("#headerUsername").textContent="@"+username;$("#profileName").textContent=name;$("#profileNick").textContent="@"+username;$("#profileAliases").innerHTML="";$("#profileBio").textContent=profile?.bio||"";$("#profileEmail").textContent=user.email||"";setAvatar($("#profileAvatar"),name,profile?.avatar_url);$("#editDisplayName").value=name;$("#editUsername").value=username;$("#editBio").value=profile?.bio||""}
 function renderAliasList(container,aliases,removable=false){
  const el=typeof container==="string"?$(container):container;if(!el)return;el.innerHTML="";
  if(!aliases?.length){el.innerHTML='<span class="muted small">Дополнительных имён пока нет.</span>';return}
@@ -940,7 +940,7 @@ $("#myAliasForm").addEventListener("submit",async e=>{
    const {data,error}=await supabase.rpc("mira_purchase_alias",{p_alias:alias});
    if(error)throw error;
    if(!data?.success){
-    const messages={invalid_alias:"Некорректное имя.",same_as_username:"Это уже твой основной никнейм.",name_taken:"Это имя уже занято.",limit_reached:"Достигнут лимит в 3 дополнительных имени.",insufficient_funds:"Недостаточно MIRA Coins. Нужно 500 M."};
+    const messages={invalid_alias:"Некорректное имя.",same_as_username:"Это уже твой основной никнейм.",name_taken:"Это имя уже занято.",limit_reached:"Достигнут лимит в 3 дополнительных имени.",insufficient_funds:"Недостаточно MIRA Coins. Нужно 500 M.",staff_free:"Для команды MIRA имена бесплатные. Обнови страницу и попробуй снова."};
     throw new Error(messages[data?.reason]||"Не удалось купить имя.");
    }
    if(data.balance!==undefined){miraWalletBalance=Number(data.balance);renderMiraWallet()}
