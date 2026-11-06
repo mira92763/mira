@@ -510,6 +510,60 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
   overflow:visible!important;
  }
 }
+
+/* MIRA 0.9 — cohesive interface polish */
+:root{
+ color-scheme:dark;
+ --surface-shadow:0 12px 34px color-mix(in srgb,var(--bg) 42%,transparent);
+ --focus-ring:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent);
+}
+.view.active{animation:miraViewIn .24s cubic-bezier(.2,.75,.25,1) both}
+@keyframes miraViewIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.box,.auth-card,.gift-modal-card,.profile-modal-card,.elite-panel{
+ box-shadow:0 8px 26px color-mix(in srgb,var(--bg) 24%,transparent);
+ transition:border-color .2s ease,box-shadow .2s ease,background-color .2s ease;
+}
+.box{background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 96%,white 4%),var(--panel))}
+.field,textarea,.search-result,.chat-item,.nav,.btn,.privacy-row{
+ transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,color .18s ease;
+}
+.field:focus-visible,textarea:focus-visible,button:focus-visible,[tabindex]:focus-visible{
+ outline:2px solid var(--accent);outline-offset:3px;box-shadow:var(--focus-ring)
+}
+.field:focus{box-shadow:var(--focus-ring)}
+.btn:not(:disabled):active,.nav:active,.chat-item:active,.search-result:active{transform:scale(.985)}
+.chat-item{border:1px solid transparent}
+.chat-item.active{background:color-mix(in srgb,var(--accent) 10%,var(--panel2));border-color:color-mix(in srgb,var(--accent) 24%,var(--line))}
+.chat-item:hover,.search-result:hover,.nav:hover{background:color-mix(in srgb,var(--accent) 8%,var(--panel2))}
+.avatar{box-shadow:0 3px 12px color-mix(in srgb,var(--accent) 18%,transparent)}
+.bubble{box-shadow:0 3px 12px color-mix(in srgb,var(--bg) 18%,transparent);animation:miraMessageIn .2s ease both}
+@keyframes miraMessageIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.empty-state{display:grid;place-items:center;min-height:112px;padding:24px 16px;border:1px dashed color-mix(in srgb,var(--line) 78%,var(--accent));border-radius:15px;background:linear-gradient(145deg,color-mix(in srgb,var(--panel2) 60%,transparent),transparent);line-height:1.65}
+#userSearch{border-radius:14px;padding:13px 15px;background:color-mix(in srgb,var(--panel2) 82%,var(--bg))}
+.heading{gap:14px}
+button:disabled{filter:saturate(.72)}
+body.booting::before{background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 28%,transparent)}
+body.booting::after{background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 45%,transparent)}
+@media(hover:hover) and (pointer:fine){
+ .box:hover{border-color:color-mix(in srgb,var(--line) 65%,var(--accent))}
+ .btn:not(:disabled):hover{filter:brightness(1.07);box-shadow:0 7px 20px color-mix(in srgb,var(--accent) 22%,transparent)}
+ .avatar{transition:transform .2s ease,box-shadow .2s ease}
+ .chat-item:hover .avatar{transform:scale(1.045)}
+}
+@media(max-width:760px){
+ .content{border-radius:20px 20px 0 0}
+ .box{border-radius:17px;padding:11px}
+ .chat-main{border-radius:17px}
+ .messages{scroll-behavior:smooth;overscroll-behavior:contain}
+ .chat-item{min-height:66px}
+ .heading{margin-bottom:16px}
+ .field,.btn{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+ .view.active,.bubble{animation:none!important}
+}
+
 </style>
 </head>
 <body class="booting">
