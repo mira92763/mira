@@ -270,6 +270,76 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--accen
  .bubble,.message-actions button{transition:none!important;}
 }
 
+
+/* MIRA_ATMOSPHERE_2026 — единый слой тонкой детализации для каждой темы */
+:root{
+ --mira-glow:color-mix(in srgb,var(--accent) 17%,transparent);
+ --mira-border:color-mix(in srgb,var(--text) 9%,transparent);
+ --mira-glass:color-mix(in srgb,var(--panel) 91%,transparent);
+}
+html{scrollbar-color:color-mix(in srgb,var(--accent) 38%,var(--line)) transparent;scrollbar-width:thin}
+::selection{background:color-mix(in srgb,var(--accent) 36%,transparent);color:var(--text)}
+body{
+ background-image:
+  radial-gradient(ellipse at 8% 4%,var(--mira-glow),transparent 31%),
+  radial-gradient(ellipse at 94% 20%,color-mix(in srgb,var(--accent2) 10%,transparent),transparent 34%),
+  linear-gradient(180deg,var(--bg),var(--bg));
+ background-attachment:fixed;
+}
+body:after{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.12;
+ background-image:radial-gradient(color-mix(in srgb,var(--text) 25%,transparent) .55px,transparent .7px);
+ background-size:19px 19px;mask-image:linear-gradient(180deg,#000,transparent 78%);
+}
+.app{position:relative;z-index:1}
+header{position:relative}
+header:after{content:"";position:absolute;bottom:-1px;left:0;width:clamp(70px,14vw,170px);height:1px;background:linear-gradient(90deg,var(--accent),transparent);opacity:.8}
+.logo{position:relative;overflow:hidden}
+.logo:after{content:"";position:absolute;inset:0;background:linear-gradient(125deg,#ffffff35,transparent 48%);pointer-events:none}
+.brand-name{background:linear-gradient(100deg,var(--text) 15%,color-mix(in srgb,var(--accent) 68%,var(--text)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sidebar,.content,.box,.auth-card,.profile-modal-card,.gift-modal-card{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.sidebar{background:var(--mira-glass)}
+.content{position:relative;overflow:hidden}
+.content:before{content:"";position:absolute;top:0;right:7%;width:150px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.45;pointer-events:none}
+.nav{position:relative;overflow:hidden}
+.nav.active:after{content:"";position:absolute;right:12px;width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.chat-item.active{box-shadow:inset 2px 0 0 var(--accent)}
+.chat-item .avatar,.search-result .avatar{transition:transform .2s ease,box-shadow .2s ease}
+.chat-item:hover .avatar,.search-result:hover .avatar{transform:scale(1.045);box-shadow:0 5px 16px var(--mira-glow)}
+.avatar{border:1px solid color-mix(in srgb,var(--text) 12%,transparent)}
+.box{background:color-mix(in srgb,var(--panel) 94%,var(--accent) 2%)}
+.field::placeholder{color:color-mix(in srgb,var(--muted) 78%,transparent)}
+.btn:not(:disabled),.theme-arrow,.voice-record-btn,.reply-cancel,.modal-close,.gift-close{transition:transform .18s ease,filter .18s ease,background .18s ease,border-color .18s ease}
+.theme-arrow:hover,.voice-record-btn:hover{border-color:color-mix(in srgb,var(--accent) 48%,var(--line));filter:brightness(1.08)}
+.theme-preview{position:relative;overflow:hidden;box-shadow:inset 0 1px #ffffff18,0 5px 14px #0002}
+.theme-preview:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 25%,#ffffff13 48%,transparent 68%);transform:translateX(-110%);transition:transform .65s ease}
+.theme-picker:hover .theme-preview:after{transform:translateX(110%)}
+.theme-dots span{transition:width .2s ease,background .2s ease,transform .2s ease}
+.theme-dots span.selected{transform:scaleY(1.15)}
+.bubble{animation:miraBubbleIn .22s ease-out both}
+@keyframes miraBubbleIn{from{opacity:0;transform:translateY(5px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+.toast{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-color:color-mix(in srgb,var(--accent) 48%,var(--line))}
+.notice,.elite-panel,.reply-composer{box-shadow:inset 0 1px #ffffff08}
+.gift-card{border-color:color-mix(in srgb,var(--gift-glow) 48%,var(--line))}
+.gift-card:focus-within{outline:2px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
+.profile-card .profile-avatar,.profile-modal-card .avatar{box-shadow:0 8px 24px var(--mira-glow)}
+/* Светлая тема получает более деликатные тени и чёткие границы */
+:root[style*="#eef0f8"]{}
+body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25s ease}
+@media(hover:hover){
+ .sidebar:hover,.content:hover{border-color:color-mix(in srgb,var(--accent) 16%,var(--line))}
+ .chat-item:not(.active):hover{transform:translateX(2px)}
+}
+@media(max-width:760px){
+ body:after{opacity:.07}
+ .brand-name{letter-spacing:3px}
+ .content:before{right:12%;width:100px}
+ .nav.active:after{right:8px;bottom:5px;width:4px;height:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
 </style>
 </head>
 <body class="booting">
