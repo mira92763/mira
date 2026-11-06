@@ -474,6 +474,15 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
 .chat-list-panel #chatList{padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px));scroll-padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px));-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 .chat-list-panel{padding-bottom:18px!important}
 @media(max-width:760px){.chat-list-panel #chatList{padding-bottom:calc(34px + env(safe-area-inset-bottom, 0px))}.chat-list-panel{padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px))!important}}
+
+
+/* MIRA PINNED CHATS */
+.chat-list-panel .chat-item{padding-right:7px}
+.chat-pin{width:30px;height:32px;flex:0 0 30px;display:grid;place-items:center;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font-size:19px;opacity:.55;transition:opacity .18s,background .18s,color .18s,border-color .18s}
+.chat-item:hover .chat-pin,.chat-pin:focus-visible,.chat-pin.is-pinned{opacity:1}
+.chat-pin.is-pinned{color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent);border-color:color-mix(in srgb,var(--accent) 28%,transparent)}
+.chat-pin:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(hover:none){.chat-pin{opacity:.8}}
 </style>
 </head>
 <body class="booting">
@@ -589,6 +598,8 @@ const $=s=>document.querySelector(s);
 function readStore(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(_){return f}}
 function saveStore(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
 function toast(m){/* In-app bottom toast notifications are disabled by design. */}
+function getPinnedChats(){try{return JSON.parse(localStorage.getItem("mira_pinned_chats_"+(currentUser?.id||""))||"[]").filter(x=>typeof x==="string")}catch(_){return []}}
+function savePinnedChats(ids){try{if(currentUser)localStorage.setItem("mira_pinned_chats_"+currentUser.id,JSON.stringify([...new Set(ids)]))}catch(error){console.warn("MIRA pinned chats storage:",error)}}
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$("#"+b.dataset.view).classList.add("active");document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n===b));if(b.dataset.view==="chats")$("#chats .chat-layout").classList.remove("mobile-chat-open")}));
 $("#chatBack").addEventListener("click",()=>$("#chats .chat-layout").classList.remove("mobile-chat-open"));
 const themes=[
@@ -923,7 +934,8 @@ async function loadConversations(){
    if(unreadResult.error)console.warn("MIRA unread count:",unreadResult.error);else unread=unreadResult.count||0;
    return {id:c.id,userId:otherId,username:p?.username||"user",name:p?.display_name||"Пользователь",avatar_url:p?.avatar_url||null,bio:p?.bio||"",preview,time:m?.created_at||c.created_at,unread};
   }));
-  chats.sort((a,b)=>new Date(b.time||0).getTime()-new Date(a.time||0).getTime());
+  const pinnedIds=getPinnedChats();
+  chats.sort((a,b)=>{const ap=pinnedIds.includes(a.id),bp=pinnedIds.includes(b.id);if(ap!==bp)return ap?-1:1;return new Date(b.time||0).getTime()-new Date(a.time||0).getTime()});
   const list=$("#chatList");list.innerHTML="";
   if(!chats.length){list.innerHTML='<div class="empty-state">Пока нет диалогов. Найди пользователя выше!</div>';return}
   for(const chat of chats){
@@ -937,7 +949,7 @@ async function loadConversations(){
    right.append(time);
    if(chat.unread>0){const badge=document.createElement("span");badge.className="unread-badge";badge.textContent=chat.unread>99?"99+":String(chat.unread);badge.setAttribute("aria-label",chat.unread+" непрочитанных сообщений");right.append(badge)}
    const preview=document.createElement("div");preview.className="chat-item-preview muted small";preview.textContent=chat.preview;
-   top.append(name,right);info.append(top,preview);button.append(avatar,info);button.addEventListener("click",()=>openConversation(chat));
+   top.append(name,right);info.append(top,preview);button.append(avatar,info);const pin=document.createElement("button");pin.type="button";pin.className="chat-pin"+(pinnedIds.includes(chat.id)?" is-pinned":"");pin.textContent="⌖";pin.title=pinnedIds.includes(chat.id)?"Открепить чат":"Закрепить чат";pin.setAttribute("aria-label",pin.title);pin.setAttribute("aria-pressed",pinnedIds.includes(chat.id)?"true":"false");pin.addEventListener("click",async event=>{event.stopPropagation();const ids=getPinnedChats(),wasPinned=ids.includes(chat.id);savePinnedChats(wasPinned?ids.filter(id=>id!==chat.id):[...ids,chat.id]);pin.classList.toggle("is-pinned",!wasPinned);pin.title=wasPinned?"Закрепить чат":"Открепить чат";pin.setAttribute("aria-label",pin.title);pin.setAttribute("aria-pressed",wasPinned?"false":"true");await loadConversations()});button.append(pin);button.addEventListener("click",()=>openConversation(chat));
    const showChatProfile=(event)=>{event.stopPropagation();openPublicProfile({id:chat.userId,username:chat.username||"user",display_name:chat.name||"Пользователь",avatar_url:chat.avatar_url||null,bio:chat.bio||""})};
    avatar.classList.add("clickable-profile");avatar.setAttribute("role","button");avatar.setAttribute("aria-label","Открыть профиль @"+(chat.username||"user"));avatar.addEventListener("click",showChatProfile);
    name.classList.add("clickable-profile");name.setAttribute("role","button");name.setAttribute("tabindex","0");name.addEventListener("click",showChatProfile);
