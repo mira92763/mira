@@ -468,6 +468,12 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
  .chat-list-panel #chatList{padding-bottom:32px!important;scroll-padding-bottom:32px;-webkit-overflow-scrolling:touch}
 }
 
+
+
+/* MIRA UX POLISH — reliable chat-list scrolling and latest-activity order */
+.chat-list-panel #chatList{padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px));scroll-padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px));-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.chat-list-panel{padding-bottom:18px!important}
+@media(max-width:760px){.chat-list-panel #chatList{padding-bottom:calc(34px + env(safe-area-inset-bottom, 0px))}.chat-list-panel{padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px))!important}}
 </style>
 </head>
 <body class="booting">
@@ -917,6 +923,7 @@ async function loadConversations(){
    if(unreadResult.error)console.warn("MIRA unread count:",unreadResult.error);else unread=unreadResult.count||0;
    return {id:c.id,userId:otherId,username:p?.username||"user",name:p?.display_name||"Пользователь",avatar_url:p?.avatar_url||null,bio:p?.bio||"",preview,time:m?.created_at||c.created_at,unread};
   }));
+  chats.sort((a,b)=>new Date(b.time||0).getTime()-new Date(a.time||0).getTime());
   const list=$("#chatList");list.innerHTML="";
   if(!chats.length){list.innerHTML='<div class="empty-state">Пока нет диалогов. Найди пользователя выше!</div>';return}
   for(const chat of chats){
