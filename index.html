@@ -45,6 +45,7 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit;border:0}
 .search-result{display:flex;align-items:center;gap:10px;padding:10px;width:100%;border-radius:12px;background:transparent;text-align:left;min-width:0}.search-result .avatar{width:36px;height:36px}
 .search-result>div:last-child,.chat-item>div:last-child{min-width:0;overflow-wrap:anywhere}.empty-state{color:var(--muted);font-size:12px;text-align:center;padding:18px 8px;line-height:1.5}#userSearch{margin-bottom:5px}
 .profile-form{max-width:560px;margin:18px auto 0;text-align:left}.profile-form textarea{min-height:90px;resize:vertical}.profile-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.profile-category-tabs{display:flex;gap:8px;padding:5px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:0 0 16px}.profile-category-tab{flex:1;padding:11px 12px;border-radius:10px;background:transparent;color:var(--muted);font-weight:700}.profile-category-tab.active{background:var(--panel2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
  .privacy-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 2px;border-top:1px solid var(--line);cursor:pointer}.privacy-row span{display:flex;flex-direction:column;gap:4px}.privacy-row small{font-size:12px;color:var(--muted);line-height:1.4}.privacy-row input{width:20px;height:20px;accent-color:var(--accent);flex:none}
 
  .alias-list{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:12px 0}
@@ -596,7 +597,7 @@ body.booting::after{background:linear-gradient(90deg,transparent,var(--accent),t
  </header>
  <div class="winter-banner" aria-label="Новогоднее оформление"><div class="winter-banner-icon">❄️</div><div><strong>Зимняя MIRA</strong><span>Пусть этой зимой будет больше тёплых сообщений.</span></div></div>
  <div class="layout">
-  <aside class="sidebar"><button class="nav active" data-view="chats"><span>▤</span>Чаты</button><button class="nav" data-view="profile"><span>◉</span>Профиль</button><button class="nav" data-view="gifts"><span>🎁</span>Подарки</button><button class="nav" data-view="settings"><span>⚙</span>Настройки</button><div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div></aside>
+  <aside class="sidebar"><button class="nav active" data-view="chats"><span>▤</span>Чаты</button><button class="nav" data-view="profile"><span>◉</span>Профиль</button><button class="nav" data-view="settings"><span>⚙</span>Настройки</button><div class="side-note">MIRA · WEB<br>Твоя новая цифровая среда.</div></aside>
   <main class="content">
    <section class="view active" id="chats">
     <div class="heading"><div><h1>Сообщения</h1><div class="muted small">Твои диалоги в одном месте</div></div><button class="btn secondary" id="newChat" type="button">＋ Новый чат</button></div>
@@ -612,7 +613,9 @@ body.booting::after{background:linear-gradient(90deg,transparent,var(--accent),t
    </section>
    <section class="view" id="profile">
     <div class="heading"><h1>Профиль</h1></div>
-    <div class="box profile-card"><div class="avatar profile-avatar" id="profileAvatar">M</div><h2 id="profileName" style="margin:0 0 4px">Пользователь</h2><div class="muted" id="profileNick">@username</div><p class="muted small" id="profileBio"></p><p class="muted small" id="profileEmail"></p><div class="notice">Профиль хранится в базе MIRA.</div>
+    <div class="profile-category-tabs" role="tablist" aria-label="Категории профиля"><button type="button" class="profile-category-tab active" id="profileMainTab" aria-selected="true">◉ Профиль</button><button type="button" class="profile-category-tab" id="profileGiftsTab" aria-selected="false">🎁 Подарки</button></div>
+    <div id="profileCategoryMain">
+    <div class="box profile-card"><div class="avatar profile-avatar" id="profileAvatar">M</div><h2 id="profileName" style="margin:0 0 4px">Пользователь</h2><div class="muted" id="profileNick">@username</div><div class="alias-list" id="profileAliases" aria-label="Дополнительные имена"></div><p class="muted small" id="profileBio"></p><p class="muted small" id="profileEmail"></p><div class="notice">Профиль хранится в базе MIRA.</div>
      <form class="profile-form" id="profileForm">
       <div class="formrow"><label for="editDisplayName">Имя</label><input class="field" id="editDisplayName" maxlength="40" required></div>
       <div class="formrow"><label for="editUsername">Никнейм</label><input class="field" id="editUsername" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" required><div class="muted small">3–20 символов: латинские буквы, цифры и _</div></div>
@@ -620,19 +623,21 @@ body.booting::after{background:linear-gradient(90deg,transparent,var(--accent),t
       <div class="formrow"><label for="avatarFile">Фотография профиля (JPG, PNG или WebP, до 5 МБ)</label><input class="field" id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp"></div>
       <div class="profile-actions"><button class="btn" id="saveProfileBtn">Сохранить профиль</button></div>
      </form>
-     <div class="elite-panel hidden" id="myAliasesPanel">
+     <div class="elite-panel" id="myAliasesPanel">
       <h3>✦ MIRA Elite Names</h3>
-      <div class="muted small">Дополнительные имена твоего аккаунта. Все они ведут на один профиль.</div>
+      <div class="muted small">Дополнительные имена твоего аккаунта. Все они ведут на один профиль. До 3 имён.</div>
       <div id="myAliasesList" class="alias-list"></div>
-      <form id="myAliasForm" class="elite-form"><input class="field" id="myAliasInput" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="Например, ceo" required><button class="btn" type="submit">Добавить имя</button></form>
-      <div class="muted small" id="myAliasesStatus" style="margin-top:8px">Доступно только участникам команды MIRA.</div>
+      <form id="myAliasForm" class="elite-form"><input class="field" id="myAliasInput" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="Например, mister" required><button class="btn" id="buyAliasBtn" type="submit">Купить за 500 M</button></form>
+      <div class="muted small" id="myAliasesStatus" style="margin-top:8px">Одно дополнительное имя — 500 MIRA Coins. Для команды MIRA добавление бесплатно.</div>
      </div>
     </div>
+    </div>
    </section>
-   <section class="view" id="gifts">
+    <div id="profileCategoryGifts" class="hidden">
     <div class="heading"><div><h1>Коллекция подарков</h1><div class="muted small">Уникальные подарки, которые тебе отправили</div></div><button class="btn secondary" id="refreshGiftsBtn" type="button">Обновить</button></div>
     <div class="box mira-wallet-box"><div><div class="muted small">ТВОЙ БАЛАНС</div><div class="mira-wallet-balance"><span>✦</span><b id="miraCoinBalance">—</b><small>MIRA Coins</small></div><div class="muted small" id="miraWalletHint">Внутренняя валюта MIRA</div></div><button class="btn" id="claimDailyCoins" type="button">Получить +20 M</button></div><div class="box gift-collection-box"><div class="gift-collection-top"><div><div class="muted small" id="giftCollectionCount">Загружаем коллекцию...</div><div class="gift-collection-stats" id="giftCollectionStats"></div></div><div class="gift-collection-tools"><input class="field" id="myGiftSearch" type="search" placeholder="Поиск в коллекции..."><select class="field" id="myGiftSort" aria-label="Сортировка коллекции"><option value="newest">Сначала новые</option><option value="oldest">Сначала старые</option><option value="rarity">По редкости</option><option value="name">По названию</option></select></div></div><div class="gift-filter-row" id="myGiftFilters"><button type="button" class="gift-filter active" data-owned-filter="all">Все</button><button type="button" class="gift-filter" data-owned-filter="common">Обычные</button><button type="button" class="gift-filter" data-owned-filter="rare">Редкие</button><button type="button" class="gift-filter" data-owned-filter="epic">Эпические</button><button type="button" class="gift-filter" data-owned-filter="legendary">Легендарные</button></div><div class="gift-grid" id="myGiftCollection"></div></div>
     <div class="notice">Каждый подарок получает собственный серийный номер. Покупки оплачиваются MIRA Coins. <b>Продажа:</b> в течение 24 часов с момента получения можно вернуть подарок в обмен на <b>85% от его первоначальной стоимости</b>. Это правило действует и для подарков, которые уже находятся в твоей коллекции. После продажи подарок исчезает из коллекции, а монеты сразу поступают на баланс.</div>
+    </div>
    </section>
    <section class="view" id="settings">
     <div class="heading"><h1>Настройки</h1></div>
@@ -682,6 +687,8 @@ function toast(m){/* In-app bottom toast notifications are disabled by design. *
 function getPinnedChats(){try{return JSON.parse(localStorage.getItem("mira_pinned_chats_"+(currentUser?.id||""))||"[]").filter(x=>typeof x==="string")}catch(_){return []}}
 function savePinnedChats(ids){try{if(currentUser)localStorage.setItem("mira_pinned_chats_"+currentUser.id,JSON.stringify([...new Set(ids)]))}catch(error){console.warn("MIRA pinned chats storage:",error)}}
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$("#"+b.dataset.view).classList.add("active");document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n===b));if(b.dataset.view==="chats")$("#chats .chat-layout").classList.remove("mobile-chat-open")}));
+function setProfileCategory(category){const gifts=category==="gifts";$("#profileCategoryMain").classList.toggle("hidden",gifts);$("#profileCategoryGifts").classList.toggle("hidden",!gifts);$("#profileMainTab").classList.toggle("active",!gifts);$("#profileGiftsTab").classList.toggle("active",gifts);$("#profileMainTab").setAttribute("aria-selected",String(!gifts));$("#profileGiftsTab").setAttribute("aria-selected",String(gifts));if(gifts)loadMyGifts()}
+$("#profileMainTab").addEventListener("click",()=>setProfileCategory("main"));$("#profileGiftsTab").addEventListener("click",()=>setProfileCategory("gifts"));
 $("#chatBack").addEventListener("click",()=>$("#chats .chat-layout").classList.remove("mobile-chat-open"));
 const themes=[
 {name:"Тёмная",vars:{"--bg":"#10111a","--panel":"#191b29","--panel2":"#222538","--line":"#30344a","--text":"#f4f3ff","--muted":"#999db4","--accent":"#8c7cf6","--accent2":"#6557cf"},preview:"#10111a",accent:"#8c7cf6"},
@@ -904,16 +911,17 @@ function renderAliasList(container,aliases,removable=false){
 async function loadEliteAccess(){
  if(!currentUser)return;
  const {data,error}=await supabase.rpc("mira_get_my_staff_role");
- if(error){console.warn("MIRA Elite role:",error);return}
- miraStaffRole=data||null;
- $("#myAliasesPanel").classList.toggle("hidden",!miraStaffRole);
+ if(error){console.warn("MIRA Elite role:",error);miraStaffRole=null}else miraStaffRole=data||null;
+ $("#myAliasesPanel").classList.remove("hidden");
  $("#eliteFounderPanel").classList.toggle("hidden",miraStaffRole!=="founder");
- if(miraStaffRole){await loadMyAliases();$("#myAliasesStatus").textContent=miraStaffRole==="founder"?"Founder · управление дополнительными именами":"Developer · доступно до 3 дополнительных имён"}
+ $("#buyAliasBtn").textContent=miraStaffRole?"Добавить бесплатно":"Купить за 500 M";
+ $("#myAliasesStatus").textContent=miraStaffRole==="founder"?"Founder · дополнительные имена без оплаты":miraStaffRole==="developer"?"Developer · до 3 дополнительных имён бесплатно":"Одно дополнительное имя стоит 500 MIRA Coins · максимум 3";
+ await loadMyAliases();
 }
 async function loadMyAliases(){
  if(!currentUser)return;const {data,error}=await supabase.rpc("mira_get_profile_aliases",{p_user_id:currentUser.id});
  if(error){$("#myAliasesStatus").textContent="Не удалось загрузить имена: "+error.message;return}
- myAliasCache=data||[];renderAliasList("#myAliasesList",myAliasCache,true)
+ myAliasCache=data||[];renderAliasList("#myAliasesList",myAliasCache,true);renderAliasList("#profileAliases",myAliasCache,false)
 }
 async function removeEliteAlias(alias){
  if(!confirm("Удалить дополнительное имя @"+alias+"?"))return;
@@ -922,10 +930,26 @@ async function removeEliteAlias(alias){
  await loadMyAliases()
 }
 $("#myAliasForm").addEventListener("submit",async e=>{
- e.preventDefault();const alias=$("#myAliasInput").value.trim().replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(alias))return;
- const {data,error}=await supabase.rpc("mira_add_alias",{p_user_id:currentUser.id,p_alias:alias});
- if(error||data===false){$("#myAliasesStatus").textContent="Не удалось добавить имя: "+(error?.message||"имя занято или лимит достигнут");return}
- $("#myAliasInput").value="";$("#myAliasesStatus").textContent="Дополнительное имя добавлено.";await loadMyAliases()
+ e.preventDefault();if(!currentUser)return;const alias=$("#myAliasInput").value.trim().replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(alias))return;
+ const button=$("#buyAliasBtn");button.disabled=true;const isStaff=!!miraStaffRole;
+ try{
+  if(isStaff){
+   const {data,error}=await supabase.rpc("mira_add_alias",{p_user_id:currentUser.id,p_alias:alias});
+   if(error||data!==true)throw new Error(error?.message||"имя занято или лимит достигнут");
+   $("#myAliasesStatus").textContent="Дополнительное имя добавлено бесплатно.";
+  }else{
+   const {data,error}=await supabase.rpc("mira_purchase_alias",{p_alias:alias});
+   if(error)throw error;
+   if(!data?.success){
+    const messages={invalid_alias:"Некорректное имя.",same_as_username:"Это уже твой основной никнейм.",name_taken:"Это имя уже занято.",limit_reached:"Достигнут лимит в 3 дополнительных имени.",insufficient_funds:"Недостаточно MIRA Coins. Нужно 500 M."};
+    throw new Error(messages[data?.reason]||"Не удалось купить имя.");
+   }
+   if(data.balance!==undefined){miraWalletBalance=Number(data.balance);renderMiraWallet()}
+   $("#myAliasesStatus").textContent="Имя @"+alias+" куплено за 500 M.";
+  }
+  $("#myAliasInput").value="";await loadMyAliases();
+ }catch(error){$("#myAliasesStatus").textContent="Не удалось добавить имя: "+(error.message||"ошибка")}
+ finally{button.disabled=false}
 });
 $("#staffRoleForm").addEventListener("submit",async e=>{
  e.preventDefault();const username=$("#staffUsernameInput").value.trim().replace(/^@/,"").toLowerCase(),role=$("#staffRoleSelect").value;
