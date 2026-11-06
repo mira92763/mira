@@ -614,8 +614,7 @@ async function sendMiraGift(gift){
  if(error){console.error("MIRA Gifts send:",error);button.disabled=false;button.textContent="Повторить";toast("Не удалось отправить подарок: "+error.message);return}
  $("#giftPickerModal").classList.add("hidden");closePublicProfile();showGiftReveal(gift);
  if(activeConversationId&&activeChatProfile?.id===recipient.id)await loadChatGiftEvents(activeConversationId,recipient.id);
- if(openedPublicProfile?.id===recipient.id)await loadPublicGiftCollection(recipient.id);
- await loadMyGifts();toast("Подарок «"+gift.title+"» отправлен!")
+ toast("Подарок «"+gift.title+"» отправлен!")
 }
 function renderMyGiftCollection(){
  const grid=$("#myGiftCollection"),query=$("#myGiftSearch").value.trim().toLocaleLowerCase("ru"),sort=$("#myGiftSort").value;
@@ -778,7 +777,7 @@ $("#profileMessageBtn").addEventListener("click",async()=>{const p=profileChatTa
 $("#profileGiftBtn").addEventListener("click",async()=>{const p=profileChatTarget;if(!p||!currentUser)return;if(p.id===currentUser.id){toast("Нельзя отправить подарок самому себе.");return}$("#giftPickerRecipient").textContent="Для "+(p.display_name||"пользователя")+" · @"+(p.username||"user");$("#giftPickerModal").classList.remove("hidden");await loadGiftCatalog()});
 $("#closeGiftPicker").addEventListener("click",()=>$("#giftPickerModal").classList.add("hidden"));
 $("#giftPickerModal").addEventListener("click",e=>{if(e.target.id==="giftPickerModal")$("#giftPickerModal").classList.add("hidden")});
-$("#refreshGiftsBtn").addEventListener("click",loadMyGifts);
+
 
 $("#profileForm").addEventListener("submit",async e=>{e.preventDefault();if(!currentUser)return;const button=$("#saveProfileBtn"),display_name=$("#editDisplayName").value.trim(),username=$("#editUsername").value.trim().toLowerCase(),bio=$("#editBio").value.trim(),file=$("#avatarFile").files[0];if(!display_name||display_name.length>40){toast("Имя должно содержать от 1 до 40 символов.");return}if(!/^[a-z0-9_]{3,20}$/.test(username)){toast("Никнейм должен содержать 3–20 латинских букв, цифр или _.");return}if(bio.length>160){toast("Описание слишком длинное.");return}if(file&&(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024)){toast("Выбери JPG, PNG или WebP до 5 МБ.");return}button.disabled=true;button.textContent="Сохраняем...";try{const {data:duplicate,error:checkError}=await supabase.from("profiles").select("id").ilike("username",username).neq("id",currentUser.id).limit(1);if(checkError)throw checkError;if(duplicate?.length){toast("Этот никнейм уже занят.");return}let avatar_url=activeProfile?.avatar_url||null;if(file){const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error:uploadError}=await supabase.storage.from("mira-avatars").upload(path,file,{contentType:file.type,upsert:false});if(uploadError)throw uploadError;avatar_url=supabase.storage.from("mira-avatars").getPublicUrl(path).data.publicUrl}const {error}=await supabase.from("profiles").update({display_name,username,bio,avatar_url}).eq("id",currentUser.id);if(error){if(error.code==="23505")throw new Error("Этот никнейм уже занят.");throw error}const profile=await loadProfile(currentUser);showProfile(profile,currentUser);$("#avatarFile").value="";await loadConversations();toast("Профиль MIRA обновлён!")}catch(error){console.error(error);toast("Не удалось сохранить профиль: "+(error.message||"ошибка"))}finally{button.disabled=false;button.textContent="Сохранить профиль"}});
 
