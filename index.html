@@ -375,7 +375,7 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
 .gift-collection-stats{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .gift-stat{font-size:10px;color:var(--muted);padding:4px 7px;border-radius:999px;background:var(--panel2);border:1px solid var(--line)}
 .gift-card .gift-serial{font-variant-numeric:tabular-nums}
-.gift-card .gift-owned-date{font-size:10px;color:var(--muted);margin-top:6px}
+.gift-card .gift-owned-date{font-size:10px;color:var(--muted);margin-top:6px}.gift-sale-info{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.4}.gift-sell-btn{width:100%;margin-top:9px;padding:9px 10px;border-radius:10px;background:color-mix(in srgb,var(--accent) 18%,var(--panel2));border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));color:var(--text);font-size:12px;font-weight:800}.gift-sell-btn:disabled{opacity:.55}
 @media(max-width:600px){
  .gift-picker-card{padding:19px 15px 16px}
  .gift-picker-heading{display:block}
@@ -743,6 +743,7 @@ function createGiftCard(gift,owned=false){
  if(owned){
   const serial=document.createElement("div");serial.className="gift-serial";serial.textContent="Серийный № "+gift.serial_number;card.append(serial);
   if(gift.created_at){const date=document.createElement("div");date.className="gift-owned-date";date.textContent=new Date(gift.created_at).toLocaleDateString("ru-RU",{day:"numeric",month:"short",year:"numeric"});card.append(date)}
+  if(gift.id&&currentUser){const remaining=24*60*60*1000-(Date.now()-new Date(gift.created_at).getTime());const info=document.createElement("div");info.className="gift-sale-info";if(remaining>0){const hours=Math.floor(remaining/3600000),minutes=Math.floor((remaining%3600000)/60000);info.textContent="Доступно для продажи ещё "+hours+" ч. "+minutes+" мин.";const sell=document.createElement("button");sell.type="button";sell.className="gift-sell-btn";const reward=Math.floor(Number(gift.purchase_price||0)*0.85);sell.textContent="Продать за +"+reward+" M";sell.addEventListener("click",()=>sellOwnedGift(gift,sell));card.append(info,sell)}else{info.textContent="Срок продажи 24 часа истёк";card.append(info)}}
  }
  return card
 }
@@ -825,12 +826,23 @@ function renderMyGiftCollection(){
  $("#giftCollectionStats").replaceChildren();
  Object.entries(counts).filter(([,n])=>n>0).forEach(([rarity,n])=>{const chip=document.createElement("span");chip.className="gift-stat";chip.textContent=giftRarityNames[rarity]+": "+n;$("#giftCollectionStats").append(chip)})
 }
+async function sellOwnedGift(gift,button){
+ if(!currentUser||!gift?.id||button.disabled)return;
+ const reward=Math.floor(Number(gift.purchase_price||0)*0.85);
+ if(!confirm("Продать «"+gift.title+"» за "+reward+" MIRA Coins? Подарок исчезнет из коллекции. Это действие нельзя отменить."))return;
+ button.disabled=true;button.textContent="Продаём…";
+ const {data,error}=await supabase.rpc("mira_sell_gift",{p_gift_instance_id:gift.id});
+ if(error){console.error("MIRA gift sale:",error);button.disabled=false;button.textContent="Продать за +"+reward+" M";const message=error.message||"";toast(message.includes("Sale period expired")?"Время продажи этого подарка уже истекло.":"Не удалось продать подарок: "+message);await loadMyGifts();return}
+ miraWalletBalance=Number(data?.balance??(miraWalletBalance+Number(data?.amount||reward)));renderMiraWallet();
+ await Promise.all([loadMyGifts(),loadMiraWallet()]);
+ toast("Подарок продан! Начислено "+Number(data?.amount??reward)+" MIRA Coins.");
+}
 async function loadMyGifts(){
  if(!currentUser)return;
  const grid=$("#myGiftCollection"),count=$("#giftCollectionCount");grid.innerHTML='<div class="gift-empty">Загружаем коллекцию...</div>';count.textContent="Обновляем...";
- const {data,error}=await supabase.from("gift_instances").select("id,gift_id,serial_number,created_at,gift_catalog(title,description,rarity,emoji)").eq("owner_id",currentUser.id).order("created_at",{ascending:false});
+ const {data,error}=await supabase.from("gift_instances").select("id,gift_id,serial_number,created_at,purchase_price,sold_at,gift_catalog(title,description,rarity,emoji)").eq("owner_id",currentUser.id).is("sold_at",null).order("created_at",{ascending:false});
  if(error){console.error("MIRA Gifts collection:",error);count.textContent="Не удалось загрузить коллекцию";grid.innerHTML='<div class="gift-empty">Ошибка загрузки: '+(error.message||"")+'</div>';return}
- myGiftItems=(data||[]).filter(item=>item.gift_catalog).map(item=>({...item.gift_catalog,serial_number:item.serial_number,created_at:item.created_at,id:item.id}));
+ myGiftItems=(data||[]).filter(item=>item.gift_catalog&&!item.sold_at).map(item=>({...item.gift_catalog,serial_number:item.serial_number,created_at:item.created_at,id:item.id,purchase_price:item.purchase_price}));
  renderMyGiftCollection()
 }
 $("#myGiftSearch").addEventListener("input",renderMyGiftCollection);
@@ -958,7 +970,7 @@ async function updatePublicProfilePresence(){if(!openedPublicProfile)return;cons
 async function loadPublicGiftCollection(userId){
  const grid=$("#publicGiftCollection"),count=$("#publicGiftCount");
  grid.innerHTML='<div class="gift-empty">Загружаем подарки…</div>';count.textContent="Загрузка…";
- const {data,error}=await supabase.from("gift_instances").select("id,gift_id,serial_number,created_at,gift_catalog(title,description,rarity,emoji)").eq("owner_id",userId).order("created_at",{ascending:false});
+ const {data,error}=await supabase.from("gift_instances").select("id,gift_id,serial_number,created_at,sold_at,gift_catalog(title,description,rarity,emoji)").eq("owner_id",userId).is("sold_at",null).order("created_at",{ascending:false});
  if(openedPublicProfile?.id!==userId)return;
  if(error){console.error("MIRA public gifts:",error);count.textContent="Недоступно";grid.innerHTML='<div class="gift-empty">Не удалось загрузить коллекцию.</div>';return}
  const items=(data||[]).filter(item=>item.gift_catalog).map(item=>({...item.gift_catalog,serial_number:item.serial_number,created_at:item.created_at}));
