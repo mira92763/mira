@@ -641,6 +641,44 @@ $("#myGiftSearch").addEventListener("input",renderMyGiftCollection);
 $("#myGiftSort").addEventListener("change",renderMyGiftCollection);
 $("#myGiftFilters").addEventListener("click",e=>{const button=e.target.closest("[data-owned-filter]");if(!button)return;ownedGiftFilter=button.dataset.ownedFilter;$("#myGiftFilters").querySelectorAll(".gift-filter").forEach(x=>x.classList.toggle("active",x===button));renderMyGiftCollection()});
 $("#refreshGiftsBtn").addEventListener("click",loadMyGifts);
+function giftConfettiBurst(host){if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)return;const layer=document.createElement("div");layer.className="gift-confetti";for(let i=0;i<18;i++){const bit=document.createElement("i"),angle=(Math.PI*2*i)/18,distance=34+Math.random()*65;bit.style.setProperty("--dx",Math.cos(angle)*distance+"px");bit.style.setProperty("--dy",Math.sin(angle)*distance+"px");bit.style.setProperty("--rot",(Math.random()*360)+"deg");bit.style.setProperty("--confetti",["#b9adff","#e6c58a","#8fc8ef","#d7a5e8"][i%4]);layer.append(bit)}host.append(layer);setTimeout(()=>layer.remove(),1000)}
+async function renderChatGiftEvent(instance,animate=true,conversationId=activeConversationId){
+ if(!instance||!currentUser||!activeChatProfile||!conversationId||activeConversationId!==conversationId)return;
+ const senderId=instance.sender_id,ownerId=instance.owner_id,partnerId=activeChatProfile.id;
+ // Старые подарки остаются в коллекции, но не повторяются в истории чата.
+ const giftTimestamp=instance.created_at?new Date(instance.created_at).getTime():0;
+ if(!giftTimestamp||Date.now()-giftTimestamp>60_000||giftTimestamp>Date.now()+30_000)return;
+ if(!((senderId===currentUser.id&&ownerId===partnerId)||(ownerId===currentUser.id&&senderId===partnerId)))return;
+ const host=$("#messages");if(!host)return;
+ if(host.querySelector('[data-gift-instance="'+instance.id+'"]'))return;
+ const {data:gift,error}=await supabase.from("gift_catalog").select("title,description,rarity,emoji").eq("id",instance.gift_id).maybeSingle();
+ if(error){console.warn("MIRA gift catalog:",error);return}
+ if(!gift||activeConversationId!==conversationId||activeChatProfile?.id!==partnerId)return;
+ host.querySelector(".empty-state")?.remove();
+ const card=document.createElement("article");card.className="chat-gift-event rarity-"+(gift.rarity||"common");card.dataset.giftInstance=instance.id;
+ const stage=document.createElement("div");stage.className="chat-gift-stage";
+ const art=document.createElement("div");art.className="chat-gift-art";art.textContent=gift.emoji||"🎁";stage.append(art);
+ const kicker=document.createElement("div");kicker.className="chat-gift-kicker";kicker.textContent="MIRA · ПОДАРОК";
+ const title=document.createElement("h3");title.className="chat-gift-title";title.textContent=(senderId===currentUser.id?"Вы подарили":"Вам подарили")+" · "+(gift.title||"Подарок");
+ const copy=document.createElement("div");copy.className="chat-gift-copy";copy.textContent=gift.description||"Коллекционный подарок MIRA";
+ const serial=document.createElement("div");serial.className="chat-gift-serial";serial.textContent="Серийный № "+instance.serial_number;
+ card.append(stage,kicker,title,copy,serial);host.append(card);host.scrollTop=host.scrollHeight;if(animate)giftConfettiBurst(card)
+}
+async function loadChatGiftEvents(conversationId,partnerId){
+ if(!currentUser||!partnerId)return;
+ const uid=currentUser.id;
+ // При открытии чата подхватываем только события за последнюю минуту.
+ const recentSince=new Date(Date.now()-60_000).toISOString();
+ const [sent,received]=await Promise.all([
+  supabase.from("gift_instances").select("id,gift_id,sender_id,owner_id,serial_number,created_at").eq("sender_id",uid).eq("owner_id",partnerId).gte("created_at",recentSince).order("created_at",{ascending:true}),
+  supabase.from("gift_instances").select("id,gift_id,sender_id,owner_id,serial_number,created_at").eq("sender_id",partnerId).eq("owner_id",uid).gte("created_at",recentSince).order("created_at",{ascending:true})
+ ]);
+ if(sent.error||received.error){console.warn("MIRA chat gifts:",sent.error||received.error);return}
+ if(activeConversationId!==conversationId||activeChatProfile?.id!==partnerId)return;
+ const items=[...(sent.data||[]),...(received.data||[])].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+ for(const item of items)await renderChatGiftEvent(item,false,conversationId)
+}
+
 /* ПРОФИЛЬ */
 async function loadProfile(user){const {data,error}=await supabase.from("profiles").select("id,username,display_name,avatar_url,bio").eq("id",user.id).maybeSingle();if(error)console.error("Ошибка загрузки профиля:",error);return data}
 function initials(name){return (name?.trim()?.[0]||"M").toUpperCase()}
