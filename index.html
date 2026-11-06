@@ -391,6 +391,12 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
 }
 @media(prefers-reduced-motion:reduce){.gift-option,.gift-filter{transition:none!important}}
 
+/* MIRA COINS */
+.mira-wallet-box{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 15px;padding:18px 20px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 13%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line))}
+.mira-wallet-balance{display:flex;align-items:baseline;gap:8px;margin:4px 0}.mira-wallet-balance span{color:var(--accent);font-size:23px}.mira-wallet-balance b{font-size:30px;letter-spacing:-1px}.mira-wallet-balance small{color:var(--muted);font-size:12px}
+.mira-picker-wallet{display:flex;justify-content:space-between;gap:10px;padding:10px 13px;margin:10px 0;border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,var(--panel2));font-size:13px}.mira-picker-wallet span:last-child{color:var(--muted)}
+.gift-option-price{display:inline-flex;align-items:center;justify-content:center;margin-top:5px;padding:4px 9px;border-radius:20px;background:color-mix(in srgb,var(--accent) 13%,var(--panel));font-size:12px;font-weight:750;color:var(--text)}
+@media(max-width:600px){.mira-wallet-box{align-items:flex-start;flex-direction:column}.mira-wallet-box .btn{width:100%}.mira-picker-wallet{flex-direction:column;gap:3px}}
 </style>
 </head>
 <body class="booting">
@@ -458,8 +464,8 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
    </section>
    <section class="view" id="gifts">
     <div class="heading"><div><h1>Коллекция подарков</h1><div class="muted small">Уникальные подарки, которые тебе отправили</div></div><button class="btn secondary" id="refreshGiftsBtn" type="button">Обновить</button></div>
-    <div class="box gift-collection-box"><div class="gift-collection-top"><div><div class="muted small" id="giftCollectionCount">Загружаем коллекцию...</div><div class="gift-collection-stats" id="giftCollectionStats"></div></div><div class="gift-collection-tools"><input class="field" id="myGiftSearch" type="search" placeholder="Поиск в коллекции..."><select class="field" id="myGiftSort" aria-label="Сортировка коллекции"><option value="newest">Сначала новые</option><option value="oldest">Сначала старые</option><option value="rarity">По редкости</option><option value="name">По названию</option></select></div></div><div class="gift-filter-row" id="myGiftFilters"><button type="button" class="gift-filter active" data-owned-filter="all">Все</button><button type="button" class="gift-filter" data-owned-filter="common">Обычные</button><button type="button" class="gift-filter" data-owned-filter="rare">Редкие</button><button type="button" class="gift-filter" data-owned-filter="epic">Эпические</button><button type="button" class="gift-filter" data-owned-filter="legendary">Легендарные</button></div><div class="gift-grid" id="myGiftCollection"></div></div>
-    <div class="notice">Каждый подарок получает собственный серийный номер. Сейчас подарки бесплатные и существуют внутри MIRA.</div>
+    <div class="box mira-wallet-box"><div><div class="muted small">ТВОЙ БАЛАНС</div><div class="mira-wallet-balance"><span>✦</span><b id="miraCoinBalance">—</b><small>MIRA Coins</small></div><div class="muted small" id="miraWalletHint">Внутренняя валюта MIRA</div></div><button class="btn" id="claimDailyCoins" type="button">Получить +20 M</button></div><div class="box gift-collection-box"><div class="gift-collection-top"><div><div class="muted small" id="giftCollectionCount">Загружаем коллекцию...</div><div class="gift-collection-stats" id="giftCollectionStats"></div></div><div class="gift-collection-tools"><input class="field" id="myGiftSearch" type="search" placeholder="Поиск в коллекции..."><select class="field" id="myGiftSort" aria-label="Сортировка коллекции"><option value="newest">Сначала новые</option><option value="oldest">Сначала старые</option><option value="rarity">По редкости</option><option value="name">По названию</option></select></div></div><div class="gift-filter-row" id="myGiftFilters"><button type="button" class="gift-filter active" data-owned-filter="all">Все</button><button type="button" class="gift-filter" data-owned-filter="common">Обычные</button><button type="button" class="gift-filter" data-owned-filter="rare">Редкие</button><button type="button" class="gift-filter" data-owned-filter="epic">Эпические</button><button type="button" class="gift-filter" data-owned-filter="legendary">Легендарные</button></div><div class="gift-grid" id="myGiftCollection"></div></div>
+    <div class="notice">Каждый подарок получает собственный серийный номер. Покупки оплачиваются монетами MIRA Coins.</div>
    </section>
    <section class="view" id="settings">
     <div class="heading"><h1>Настройки</h1></div>
@@ -497,7 +503,7 @@ body:has(.view.active) .content{transition:border-color .25s ease,box-shadow .25
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px"><button class="btn secondary" id="profileGiftBtn" type="button">🎁 Подарить</button><button class="btn" id="profileMessageBtn" type="button">Написать сообщение</button></div>
  </div>
 </div>
-<div class="gift-modal hidden" id="giftPickerModal" role="dialog" aria-modal="true" aria-labelledby="giftPickerTitle"><div class="gift-modal-card gift-picker-card"><button class="gift-close" id="closeGiftPicker" type="button" aria-label="Закрыть">×</button><div class="gift-picker-heading"><div><div class="gift-kicker">MIRA · GIFT STUDIO</div><h2 id="giftPickerTitle">Выбери подарок</h2><p class="muted small" id="giftPickerRecipient">Подарок будет отправлен пользователю</p></div><div class="gift-total-pill" id="giftCatalogTotal">26 предметов</div></div><div class="gift-toolbar"><input class="field" id="giftCatalogSearch" type="search" placeholder="Найти подарок..." autocomplete="off"><select class="field" id="giftCatalogSort" aria-label="Сортировка подарков"><option value="rarity">Сначала редкие</option><option value="name">По названию</option></select></div><div class="gift-filter-row" id="giftCatalogFilters"><button type="button" class="gift-filter active" data-gift-filter="all">Все</button><button type="button" class="gift-filter" data-gift-filter="common">Обычные</button><button type="button" class="gift-filter" data-gift-filter="rare">Редкие</button><button type="button" class="gift-filter" data-gift-filter="epic">Эпические</button><button type="button" class="gift-filter" data-gift-filter="legendary">Легендарные</button></div><div class="gift-grid gift-catalog-grid" id="giftCatalogGrid"><div class="gift-empty">Загружаем каталог...</div></div><div class="gift-selected hidden" id="giftSelectedPanel"><div class="gift-selected-art" id="giftSelectedEmoji">🎁</div><div class="gift-selected-info"><div class="gift-rarity" id="giftSelectedRarity">Редкий</div><b id="giftSelectedTitle">Подарок</b><div class="muted small" id="giftSelectedDescription"></div></div><button class="btn" id="sendSelectedGift" type="button" disabled>Выбрать подарок</button></div></div></div>
+<div class="gift-modal hidden" id="giftPickerModal" role="dialog" aria-modal="true" aria-labelledby="giftPickerTitle"><div class="gift-modal-card gift-picker-card"><button class="gift-close" id="closeGiftPicker" type="button" aria-label="Закрыть">×</button><div class="gift-picker-heading"><div><div class="gift-kicker">MIRA · GIFT STUDIO</div><h2 id="giftPickerTitle">Выбери подарок</h2><p class="muted small" id="giftPickerRecipient">Подарок будет отправлен пользователю</p></div><div class="gift-total-pill" id="giftCatalogTotal">26 предметов</div></div><div class="mira-picker-wallet"><span>Баланс: <b id="giftPickerBalance">—</b> M</span><span>Монеты списываются при отправке</span></div><div class="gift-toolbar"><input class="field" id="giftCatalogSearch" type="search" placeholder="Найти подарок..." autocomplete="off"><select class="field" id="giftCatalogSort" aria-label="Сортировка подарков"><option value="rarity">Сначала редкие</option><option value="name">По названию</option></select></div><div class="gift-filter-row" id="giftCatalogFilters"><button type="button" class="gift-filter active" data-gift-filter="all">Все</button><button type="button" class="gift-filter" data-gift-filter="common">Обычные</button><button type="button" class="gift-filter" data-gift-filter="rare">Редкие</button><button type="button" class="gift-filter" data-gift-filter="epic">Эпические</button><button type="button" class="gift-filter" data-gift-filter="legendary">Легендарные</button></div><div class="gift-grid gift-catalog-grid" id="giftCatalogGrid"><div class="gift-empty">Загружаем каталог...</div></div><div class="gift-selected hidden" id="giftSelectedPanel"><div class="gift-selected-art" id="giftSelectedEmoji">🎁</div><div class="gift-selected-info"><div class="gift-rarity" id="giftSelectedRarity">Редкий</div><b id="giftSelectedTitle">Подарок</b><div class="muted small" id="giftSelectedDescription"></div></div><button class="btn" id="sendSelectedGift" type="button" disabled>Выбрать подарок</button></div></div></div>
 <div class="gift-modal hidden" id="giftRevealModal" role="dialog" aria-modal="true" aria-labelledby="giftRevealTitle"><div class="gift-reveal-card" id="giftRevealCard"><div class="gift-reveal-caption">MIRA · COLLECTIBLE GIFT</div><div class="gift-reveal-emoji" id="giftRevealEmoji">🎁</div><div class="gift-rarity" id="giftRevealRarity">Редкий</div><h2 id="giftRevealTitle">Подарок отправлен</h2><p class="muted small" id="giftRevealDescription"></p><button class="btn" id="closeGiftReveal" type="button">Отлично</button></div></div>
 <div class="toast" id="toast"></div>
 <script>
@@ -581,8 +587,8 @@ function renderGiftCatalog(){
   const art=document.createElement("span");art.className="gift-option-art";art.textContent=gift.emoji||"🎁";
   const title=document.createElement("span");title.className="gift-option-name";title.textContent=gift.title;
   const desc=document.createElement("span");desc.className="gift-option-desc";desc.textContent=gift.description||"Коллекционный подарок MIRA";
-  const rarity=document.createElement("span");rarity.className="gift-rarity";rarity.textContent=giftRarityNames[gift.rarity]||"Подарок";
-  card.append(art,title,desc,rarity);card.addEventListener("click",()=>selectGift(gift));grid.append(card)
+  const rarity=document.createElement("span");rarity.className="gift-rarity";rarity.textContent=giftRarityNames[gift.rarity]||"Подарок";const price=document.createElement("span");price.className="gift-option-price";price.textContent="✦ "+Number(gift.price||0)+" M";
+  card.append(art,title,desc,rarity,price);card.addEventListener("click",()=>selectGift(gift));grid.append(card)
  });
  $("#giftCatalogTotal").textContent=giftCatalogCache.length+" предметов"
 }
@@ -591,14 +597,34 @@ function selectGift(gift){
  $("#giftSelectedEmoji").textContent=gift.emoji||"🎁";
  $("#giftSelectedRarity").textContent=giftRarityNames[gift.rarity]||"Подарок";
  $("#giftSelectedTitle").textContent=gift.title||"Подарок";
- $("#giftSelectedDescription").textContent=gift.description||"Коллекционный подарок MIRA";
+ $("#giftSelectedDescription").textContent=(gift.description||"Коллекционный подарок MIRA")+" · "+Number(gift.price||0)+" M";
  $("#giftSelectedPanel").classList.remove("hidden");
- $("#sendSelectedGift").disabled=false;$("#sendSelectedGift").textContent="Отправить";
+ $("#sendSelectedGift").disabled=false;$("#sendSelectedGift").textContent="Отправить · "+Number(gift.price||0)+" M";
  renderGiftCatalog()
 }
+let miraWalletBalance=null;
+function renderMiraWallet(){
+ const balance=$("#miraCoinBalance");if(balance)balance.textContent=miraWalletBalance===null?"—":miraWalletBalance.toLocaleString("ru-RU");
+ const picker=$("#giftPickerBalance");if(picker)picker.textContent=miraWalletBalance===null?"—":miraWalletBalance.toLocaleString("ru-RU");
+}
+async function loadMiraWallet(){
+ if(!currentUser)return;
+ const {data,error}=await supabase.from("mira_wallets").select("balance,last_daily_claim_at").eq("user_id",currentUser.id).maybeSingle();
+ if(error){console.error("MIRA wallet:",error);$("#miraWalletHint").textContent="Не удалось загрузить баланс";return}
+ miraWalletBalance=Number(data?.balance??100);renderMiraWallet();
+ const claimed=data?.last_daily_claim_at&&new Date(data.last_daily_claim_at).toISOString().slice(0,10)===new Date().toISOString().slice(0,10);
+ $("#claimDailyCoins").disabled=!!claimed;$("#claimDailyCoins").textContent=claimed?"Бонус получен сегодня":"+20 M · ежедневно";
+ $("#miraWalletHint").textContent=claimed?"Ежедневный бонус уже получен.":"Ежедневный бонус обновляется раз в сутки (UTC).";
+}
+$("#claimDailyCoins").addEventListener("click",async()=>{
+ if(!currentUser)return;const button=$("#claimDailyCoins");button.disabled=true;button.textContent="Начисляем…";
+ const {data,error}=await supabase.rpc("mira_claim_daily_bonus");
+ if(error){button.disabled=false;button.textContent="+20 M · ежедневно";toast(error.message?.includes("already claimed")?"Сегодня бонус уже получен.":"Не удалось получить бонус: "+error.message);await loadMiraWallet();return}
+ miraWalletBalance=Number(data?.balance??miraWalletBalance);renderMiraWallet();button.textContent="Бонус получен сегодня";$("#miraWalletHint").textContent="+20 M добавлено на твой баланс.";toast("Получено 20 MIRA Coins!");
+});
 async function loadGiftCatalog(){
  const grid=$("#giftCatalogGrid");grid.innerHTML='<div class="gift-empty">Загружаем каталог...</div>';
- const {data,error}=await supabase.from("gift_catalog").select("id,title,description,rarity,emoji").eq("is_active",true);
+ const {data,error}=await supabase.from("gift_catalog").select("id,title,description,rarity,emoji,price").eq("is_active",true);
  if(error){console.error("MIRA Gifts catalog:",error);grid.innerHTML='<div class="gift-empty">Не удалось загрузить каталог. '+(error.message||"")+'</div>';return}
  giftCatalogCache=data||[];selectedGift=null;$("#giftSelectedPanel").classList.add("hidden");$("#sendSelectedGift").disabled=true;renderGiftCatalog()
 }
@@ -611,7 +637,8 @@ async function sendMiraGift(gift){
  if(!currentUser||!recipient||recipient.id===currentUser.id||!gift)return;
  const button=$("#sendSelectedGift");button.disabled=true;button.textContent="Отправляем…";
  const {data,error}=await supabase.rpc("mira_send_gift",{p_recipient_id:recipient.id,p_gift_id:gift.id});
- if(error){console.error("MIRA Gifts send:",error);button.disabled=false;button.textContent="Повторить";toast("Не удалось отправить подарок: "+error.message);return}
+ if(error){console.error("MIRA Gifts send:",error);button.disabled=false;button.textContent="Повторить";toast(error.message?.includes("Not enough MIRA Coins")?"Не хватает MIRA Coins для этого подарка.":"Не удалось отправить подарок: "+error.message);return}
+ if(data?.balance!==undefined){miraWalletBalance=Number(data.balance);renderMiraWallet()}
  $("#giftPickerModal").classList.add("hidden");closePublicProfile();showGiftReveal(gift);
  if(activeConversationId&&activeChatProfile?.id===recipient.id)await loadChatGiftEvents(activeConversationId,recipient.id);
  toast("Подарок «"+gift.title+"» отправлен!")
@@ -728,7 +755,7 @@ $("#founderAliasForm").addEventListener("submit",async e=>{
  const {data,error}=await supabase.rpc("mira_add_alias_for_username",{p_username:username,p_alias:alias});
  $("#eliteFounderStatus").textContent=error?"Ошибка: "+error.message:(data?"Дополнительное имя выдано.":"Не удалось выдать имя.")
 });
-function showApp(user,profile){currentUser=user;document.body.classList.remove("booting");authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess();loadMyGifts()}
+function showApp(user,profile){currentUser=user;document.body.classList.remove("booting");authScreen.classList.add("hidden");app.classList.remove("hidden");showProfile(profile,user);startChats(user);startPresence();loadEliteAccess();loadMyGifts();loadMiraWallet()}
 async function refreshSession(){
  try{
   const {data,error}=await supabase.auth.getSession();
